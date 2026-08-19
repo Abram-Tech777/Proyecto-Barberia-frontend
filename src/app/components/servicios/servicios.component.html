@@ -1,0 +1,29 @@
+<div class="bg-neutral-950 min-h-[60vh]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+    <h2 class="text-3xl sm:text-4xl font-bold text-neutral-100">Nuestros Servicios</h2>
+    <p class="text-neutral-400 mt-2">Elige tu estilo y reserva con nosotros.</p>
+
+    <div *ngIf="cargando" class="mt-8 text-neutral-400">Cargando servicios...</div>
+
+    <div *ngIf="!cargando && servicios.length === 0" class="mt-8 text-neutral-400">
+      No hay servicios registrados. Agrega servicios desde el backend primero.
+    </div>
+
+    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let s of servicios"
+           class="bg-neutral-900 border border-neutral-800 rounded-lg p-6 flex flex-col">
+        <div class="text-3xl mb-3">✂️</div>
+        <h3 class="text-neutral-100 text-lg font-semibold">{{ s.nombre }}</h3>
+        <p class="text-neutral-400 text-sm mt-1 flex-1">{{ s.descripcion }}</p>
+        <div class="mt-4 flex items-center justify-between">
+          <span class="text-neutral-500 text-sm">{{ s.duracionMinutos }} min</span>
+          <span class="text-amber-500 font-bold text-lg">{{ s.precioBase | currency: 'PEN' }}</span>
+        </div>
+        <a routerLink="/reservas"
+           class="mt-4 block text-center bg-amber-500 hover:bg-amber-400 text-neutral-950 font-semibold py-2 rounded transition-colors">
+          Reservar
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

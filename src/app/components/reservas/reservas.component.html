@@ -1,0 +1,56 @@
+<div class="bg-neutral-950 min-h-[60vh]">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 py-16">
+    <h2 class="text-3xl sm:text-4xl font-bold text-neutral-100">Reserva tu cita</h2>
+    <p class="text-neutral-400 mt-2">Completa el formulario y nos encargamos del resto.</p>
+
+    <div *ngIf="mensajeExito"
+         class="mt-6 bg-emerald-950 border border-emerald-700 text-emerald-300 rounded p-4">
+      {{ mensajeExito }}
+    </div>
+
+    <div *ngIf="error" class="mt-6 bg-red-950 border border-red-700 text-red-300 rounded p-4">
+      {{ error }}
+    </div>
+
+    <div *ngIf="cargando" class="mt-8 text-neutral-400">Cargando barberos disponibles...</div>
+
+    <form *ngIf="!cargando" (ngSubmit)="reservar()" class="mt-8 bg-neutral-900 border border-neutral-800 rounded-lg p-6 space-y-5">
+      <div>
+        <label class="block text-neutral-300 text-sm font-medium mb-1">Nombre *</label>
+        <input type="text" [(ngModel)]="nombreCliente" name="nombreCliente" required
+               class="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-neutral-100 focus:outline-none focus:border-amber-500">
+      </div>
+
+      <div>
+        <label class="block text-neutral-300 text-sm font-medium mb-1">Celular *</label>
+        <input type="tel" [(ngModel)]="celularCliente" name="celularCliente" required
+               class="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-neutral-100 focus:outline-none focus:border-amber-500">
+      </div>
+
+      <div>
+        <label class="block text-neutral-300 text-sm font-medium mb-1">Barbero *</label>
+        <select [(ngModel)]="barberoId" name="barberoId" required
+                class="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-neutral-100 focus:outline-none focus:border-amber-500">
+          <option *ngFor="let b of barberos" [ngValue]="b.id">{{ b.nombreCompleto }}</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-neutral-300 text-sm font-medium mb-1">Fecha y hora *</label>
+        <input type="datetime-local" [(ngModel)]="fechaHora" name="fechaHora" required
+               class="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-neutral-100 focus:outline-none focus:border-amber-500">
+      </div>
+
+      <div>
+        <label class="block text-neutral-300 text-sm font-medium mb-1">Monto (opcional)</label>
+        <input type="number" [(ngModel)]="montoTotal" name="montoTotal" min="0" step="0.01"
+               class="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-neutral-100 focus:outline-none focus:border-amber-500">
+      </div>
+
+      <button type="submit" [disabled]="enviando"
+              class="w-full bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-neutral-950 font-semibold py-3 rounded transition-colors">
+        {{ enviando ? 'Reservando...' : 'Reservar cita' }}
+      </button>
+    </form>
+  </div>
+</div>
