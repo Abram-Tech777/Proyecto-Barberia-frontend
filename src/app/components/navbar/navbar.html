@@ -1,28 +1,49 @@
-<nav class="bg-neutral-950 border-b border-neutral-800 sticky top-0 z-50">
+<nav class="bg-paper sticky top-0 z-50 w-full border-b border-line-light">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
     <a routerLink="/" class="flex items-center gap-2">
-      <span class="text-2xl">💈</span>
-      <span class="text-xl font-bold tracking-widest text-neutral-100">IRON<span class="text-amber-500">&amp;</span>OAK</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6 text-gold-dark">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M12 6c0-1.7 1-3 2-3 1 0 2 1.3 2 3M12 6c0-1.7-1-3-2-3-1 0-2 1.3-2 3M12 12c0-1.7 1-3 2-3 1 0 2 1.3 2 3M12 12c0-1.7-1-3-2-3-1 0-2 1.3-2 3M12 18c0-1.7 1-3 2-3 1 0 2 1.3 2 3M12 18c0-1.7-1-3-2-3-1 0-2 1.3-2 3" />
+      </svg>
+      <span class="font-display text-2xl text-ink tracking-tight">IRON<span class="text-gold-dark">&amp;</span>OAK</span>
     </a>
 
-    <div class="hidden sm:flex items-center gap-8">
-      <a routerLink="/" routerLinkActive="text-amber-500" [routerLinkActiveOptions]="{ exact: true }"
-         class="text-neutral-300 hover:text-amber-500 transition-colors">Inicio</a>
-      <a routerLink="/servicios" routerLinkActive="text-amber-500"
-         class="text-neutral-300 hover:text-amber-500 transition-colors">Servicios</a>
-      <a routerLink="/reservas" routerLinkActive="text-amber-500"
-         class="text-neutral-300 hover:text-amber-500 transition-colors">Reservas</a>
-      <a routerLink="/reservas"
-         class="bg-amber-500 hover:bg-amber-400 text-neutral-950 font-semibold px-4 py-2 rounded transition-colors">
-        Reservar ahora
-      </a>
+    <div class="hidden md:flex items-center gap-6">
+      <a routerLink="/" routerLinkActive="text-gold-dark border-b-2 border-gold-dark pb-1" [routerLinkActiveOptions]="{ exact: true }"
+         class="text-label-caps text-muted hover:text-ink transition-colors">Inicio</a>
+      <a routerLink="/servicios" routerLinkActive="text-gold-dark border-b-2 border-gold-dark pb-1"
+         class="text-label-caps text-muted hover:text-ink transition-colors">Servicios</a>
+      <a routerLink="/tienda" routerLinkActive="text-gold-dark border-b-2 border-gold-dark pb-1"
+         class="text-label-caps text-muted hover:text-ink transition-colors">Tienda</a>
+      <a *ngIf="esCliente()" routerLink="/reservas" routerLinkActive="text-gold-dark border-b-2 border-gold-dark pb-1"
+         class="text-label-caps text-muted hover:text-ink transition-colors">Reservas</a>
     </div>
 
-    <div class="sm:hidden">
-      <a routerLink="/reservas"
-         class="bg-amber-500 hover:bg-amber-400 text-neutral-950 font-semibold px-3 py-1.5 rounded text-sm transition-colors">
-        Reservar
+    <div class="flex items-center gap-3">
+      <a *ngIf="esCliente()" routerLink="/carrito" class="relative text-muted hover:text-gold-dark transition-colors" title="Carrito">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 4.6a1 1 0 00.9 1.4H19M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z" />
+        </svg>
+        <span *ngIf="(cartCount$ | async)! > 0" class="absolute -top-1.5 -right-1.5 bg-gold text-charcoal text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+          {{ cartCount$ | async }}
+        </span>
       </a>
+
+      <a *ngIf="usuario?.rol === 'ADMIN'" routerLink="/admin" routerLinkActive="text-gold-dark"
+         class="bg-charcoal hover:bg-walnut text-gold-light text-label-caps px-4 py-2 transition-colors">Admin</a>
+
+      <ng-container *ngIf="!usuario">
+        <a routerLink="/login" class="hidden sm:inline text-label-caps text-muted hover:text-ink transition-colors">Ingresar</a>
+        <a routerLink="/registro" class="btn-gold px-4 py-2 text-center inline-block">Crear cuenta</a>
+      </ng-container>
+      <ng-container *ngIf="usuario">
+        <span class="hidden sm:inline text-sm text-muted">
+          Hola, <span class="text-gold-dark font-semibold">{{ usuario.nombreUsuario || usuario.email }}</span>
+        </span>
+        <button (click)="cerrarSesion()"
+                class="bg-charcoal hover:bg-walnut text-white text-sm px-4 py-2 transition-colors">
+          Cerrar sesión
+        </button>
+      </ng-container>
     </div>
   </div>
 </nav>

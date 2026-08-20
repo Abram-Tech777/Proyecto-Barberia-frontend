@@ -14,6 +14,7 @@ import { Servicio } from '../../models/servicio';
 export class ServiciosComponent implements OnInit {
   servicios: Servicio[] = [];
   cargando = true;
+  error = '';
 
   constructor(private servicioService: ServicioService) {}
 
@@ -26,6 +27,7 @@ export class ServiciosComponent implements OnInit {
       error: (err) => {
         console.error('Error al obtener servicios:', err);
         this.cargando = false;
+        this.error = 'No se pudieron cargar los servicios. Verifica que el backend esté corriendo.';
       },
     });
   }

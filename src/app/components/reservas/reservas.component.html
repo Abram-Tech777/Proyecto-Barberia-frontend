@@ -12,9 +12,13 @@
       {{ error }}
     </div>
 
-    <div *ngIf="cargando" class="mt-8 text-neutral-400">Cargando barberos disponibles...</div>
+    <div *ngIf="errorBarberos" class="mt-6 bg-red-950 border border-red-700 text-red-300 rounded p-4">
+      {{ errorBarberos }}
+    </div>
 
-    <form *ngIf="!cargando" (ngSubmit)="reservar()" class="mt-8 bg-neutral-900 border border-neutral-800 rounded-lg p-6 space-y-5">
+    <div *ngIf="cargandoBarberos" class="mt-8 text-neutral-400">Cargando barberos disponibles...</div>
+
+    <form *ngIf="!cargandoBarberos" (ngSubmit)="reservar()" class="mt-8 bg-neutral-900 border border-neutral-800 rounded-lg p-6 space-y-5">
       <div>
         <label class="block text-neutral-300 text-sm font-medium mb-1">Nombre *</label>
         <input type="text" [(ngModel)]="nombreCliente" name="nombreCliente" required

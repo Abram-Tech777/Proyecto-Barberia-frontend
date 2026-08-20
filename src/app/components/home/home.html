@@ -1,42 +1,173 @@
-<section class="relative bg-neutral-950 text-neutral-100">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-24 sm:py-32 text-center">
-    <p class="text-amber-500 uppercase tracking-[0.3em] text-sm font-semibold mb-4">Estilo de leyenda</p>
-    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight">
-      IRON<span class="text-amber-500">&amp;</span>OAK
-    </h1>
-    <p class="text-neutral-400 text-lg sm:text-xl mt-6 max-w-2xl mx-auto">
-      Cortes de cabello, afeitados clásicos y grooming de primera. Reserva tu cita
-      y deja tu estilo en manos de expertos.
-    </p>
-    <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a routerLink="/reservas"
-         class="bg-amber-500 hover:bg-amber-400 text-neutral-950 font-semibold px-8 py-3 rounded transition-colors">
-        Reserva tu cita
-      </a>
-      <a routerLink="/servicios"
-         class="border border-neutral-700 hover:border-amber-500 hover:text-amber-500 text-neutral-300 font-semibold px-8 py-3 rounded transition-colors">
-        Ver servicios
-      </a>
+<!-- HERO -->
+<section class="relative h-[90vh] min-h-[600px] flex items-center overflow-hidden bg-charcoal">
+  <div class="absolute inset-0 z-0">
+    <div class="w-full h-full bg-cover bg-center bg-no-repeat"
+         style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB8ujFA1JgoqfAdaeYbm86pwYAxVMbm40gXBGDDlFQ1C9MUr97DOsSkt0dLTvfsz3kbYrU7tbkMGwuwOhcUma4ZABHKTz9F_dh6xWXeEh3mQ8Bmqt73aXlQJ4bxZ6DPDtlmMDekIMysjjS3cXDepvU_gbfjIQzeIdfwn0MC7n_W1zvhMyOj3KS4DADajzt6Sk0uWqalSvDW2EuJqW-t_JEIx3h2ke79AyAWrscZ-dZBvC-TTvgiXIBM3vldyi5UcC5EKMFO-AOaoZfy')">
+      <div class="absolute inset-0 charcoal-overlay"></div>
+    </div>
+  </div>
+
+  <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 w-full">
+    <div class="max-w-3xl">
+      <h1 class="font-display text-4xl sm:text-5xl text-white mb-6 uppercase tracking-tight">
+        Maestría en cada corte.<br/>
+        <span class="text-gold-light">Legado en cada estilo.</span>
+      </h1>
+      <p class="text-lg sm:text-xl text-neutral-300 mb-10 max-w-xl opacity-90 leading-relaxed">
+        Más que una barbería, una experiencia de caballero en el corazón de la ciudad. Precisión técnica y hospitalidad tradicional.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a routerLink="/reservas" class="btn-gold px-10 py-4 text-center inline-block">
+          Reserva tu Cita
+        </a>
+        <a routerLink="/servicios" class="industrial-border-gold text-gold-light px-10 py-4 text-label-caps text-center inline-block hover:bg-gold-light hover:text-charcoal transition-colors">
+          Ver Servicios
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-8 h-8 text-gold-light">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+    </svg>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section class="py-16 sm:py-20 bg-paper" id="services">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-12">
+      <h2 class="font-display text-3xl sm:text-4xl text-ink uppercase mb-4">Nuestros Servicios</h2>
+      <div class="w-24 h-px bg-gold mx-auto"></div>
+      <p class="text-muted mt-4">Cada servicio, ejecutado con precisión artesanal.</p>
+    </div>
+
+    <div *ngIf="cargando" class="text-center py-10 text-muted">Cargando servicios...</div>
+
+    <div *ngIf="!cargando && servicios.length === 0" class="text-center py-10 text-muted">
+      Aún no hay servicios publicados.
+    </div>
+
+    <div *ngIf="!cargando" class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
+      <div *ngFor="let s of servicios" class="flex flex-col">
+        <div class="flex justify-between items-baseline border-b border-line-light pb-2 hover-gold transition-colors group/item">
+          <div class="flex-1">
+            <h3 class="text-lg group-hover/item:text-gold-dark transition-colors font-semibold">{{ s.nombre }}</h3>
+            <p *ngIf="s.descripcion" class="text-sm text-muted mt-1">{{ s.descripcion }}</p>
+            <p class="text-xs text-muted mt-1 uppercase tracking-wider">{{ s.duracionMinutos }} min</p>
+          </div>
+          <span class="text-label-caps text-muted whitespace-nowrap ml-4">{{ s.precioBase | currency: 'PEN' }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="bg-neutral-900">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 grid grid-cols-1 sm:grid-cols-3 gap-6">
-    <div class="bg-neutral-950 border border-neutral-800 rounded-lg p-6 text-center">
-      <div class="text-3xl mb-3">✂️</div>
-      <h3 class="text-neutral-100 font-semibold">Cortes precisos</h3>
-      <p class="text-neutral-400 text-sm mt-2">Fades, texturizados y estilos personalizados.</p>
+<!-- NOSOTROS -->
+<section class="bg-charcoal text-white py-16 sm:py-20 overflow-hidden" id="about">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-7">
+        <span class="text-label-caps text-gold-light mb-4 block">Nuestra herencia</span>
+        <h2 class="font-display text-3xl sm:text-4xl mb-8 uppercase">Precisión y Tradición</h2>
+        <div class="text-neutral-300 space-y-6 max-w-2xl leading-relaxed">
+          <p>En Iron &amp; Oak, entendemos que la barbería es una forma de arte que se ha perfeccionado durante siglos. No solo cortamos el cabello; esculpimos identidades y preservamos el legado del caballero moderno.</p>
+          <p>Nuestra tienda combina la estética industrial de un taller mecánico con el lujo refinado de un club social de mediados de siglo. Cada detalle, desde nuestras sillas de cuero vintage hasta nuestras herramientas de acero templado, ha sido seleccionado para ofrecer una experiencia de santuario y precisión.</p>
+        </div>
+        <div class="mt-10 flex gap-12">
+          <div>
+            <div class="text-4xl font-display text-gold-light mb-2">10+</div>
+            <div class="text-label-caps uppercase opacity-60">Años de Exp.</div>
+          </div>
+          <div>
+            <div class="text-4xl font-display text-gold-light mb-2">15k</div>
+            <div class="text-label-caps uppercase opacity-60">Clientes</div>
+          </div>
+        </div>
+      </div>
+      <div class="lg:col-span-5 relative">
+        <div class="aspect-[4/5] bg-cover bg-center industrial-border-gold p-4"
+             style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDZe0jPyUqVMXqDd5phPOsktl9BfYi_H_vLi8xFmQkRDUstcVDj_V2ARotUezk4jhV9bujYNSzc3TsVjdF_FE69X0vjecjBl7-CLxVhKr2JOZrJ027QJxkp1buGB6ZqgkpScmVxmFC85F6wAmOJnIMq4pMZ41i6UTrFLRJMtB1oEZkBrlAGDpSxYChq7l2q1m8zi31ojLF9n4W-xP_yESR_GclZfOI17Bi5HIgxAUJzU6ZwjXZr0Vm3YOwxvVQJ7kEYFs8n6wegUS_J')">
+          <div class="w-full h-full border border-gold-light opacity-30"></div>
+        </div>
+      </div>
     </div>
-    <div class="bg-neutral-950 border border-neutral-800 rounded-lg p-6 text-center">
-      <div class="text-3xl mb-3">🪒</div>
-      <h3 class="text-neutral-100 font-semibold">Afeitado clásico</h3>
-      <p class="text-neutral-400 text-sm mt-2">Experiencia de barbería tradicional con toalla caliente.</p>
+  </div>
+</section>
+
+<!-- GALERÍA (Bento Grid) -->
+<section class="py-16 sm:py-20 bg-paper-low" id="gallery">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-12">
+      <h2 class="font-display text-3xl sm:text-4xl text-ink uppercase mb-4">Atmósfera &amp; Estilo</h2>
+      <div class="w-24 h-px bg-gold mx-auto"></div>
     </div>
-    <div class="bg-neutral-950 border border-neutral-800 rounded-lg p-6 text-center">
-      <div class="text-3xl mb-3">💈</div>
-      <h3 class="text-neutral-100 font-semibold">Grooming premium</h3>
-      <p class="text-neutral-400 text-sm mt-2">Productos y acabados para un look impecable.</p>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[250px]">
+      <div class="md:col-span-2 md:row-span-2 relative group overflow-hidden bg-neutral-900">
+        <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+             style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB8ujFA1JgoqfAdaeYbm86pwYAxVMbm40gXBGDDlFQ1C9MUr97DOsSkt0dLTvfsz3kbYrU7tbkMGwuwOhcUma4ZABHKTz9F_dh6xWXeEh3mQ8Bmqt73aXlQJ4bxZ6DPDtlmMDekIMysjjS3cXDepvU_gbfjIQzeIdfwn0MC7n_W1zvhMyOj3KS4DADajzt6Sk0uWqalSvDW2EuJqW-t_JEIx3h2ke79AyAWrscZ-dZBvC-TTvgiXIBM3vldyi5UcC5EKMFO-AOaoZfy')">
+        </div>
+        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <span class="text-label-caps text-white border border-white px-4 py-2">The Workshop</span>
+        </div>
+      </div>
+      <div class="md:col-span-1 md:row-span-1 relative group overflow-hidden bg-neutral-900">
+        <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+             style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDZe0jPyUqVMXqDd5phPOsktl9BfYi_H_vLi8xFmQkRDUstcVDj_V2ARotUezk4jhV9bujYNSzc3TsVjdF_FE69X0vjecjBl7-CLxVhKr2JOZrJ027QJxkp1buGB6ZqgkpScmVxmFC85F6wAmOJnIMq4pMZ41i6UTrFLRJMtB1oEZkBrlAGDpSxYChq7l2q1m8zi31ojLF9n4W-xP_yESR_GclZfOI17Bi5HIgxAUJzU6ZwjXZr0Vm3YOwxvVQJ7kEYFs8n6wegUS_J')">
+        </div>
+      </div>
+      <div class="md:col-span-1 md:row-span-2 relative group overflow-hidden bg-neutral-900">
+        <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+             style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDca7Dw60R3j-thJfj32kIAgt_lNuJYSFJglotWumSU2xP-qDgxbu6XI2AX54a-edqK_FvHlnJ7Z4DZ4DXk9jLO3LGzaDaSJsx_vLUodeeVJL3VgrQEJ_8k3x6ZykykyqFIaW2U4l1sePbx9v25spAhmT3bizh5nILdUpcrDo60ztaP_HCf3tZuLINE8-JbafxHQO_YvK9t0s97E2siFWRRGRoGArl6OUfnSlyFrg7_TZUEc_dK7rrOTjuCxNTyh9687t_nlOxyilow')">
+        </div>
+      </div>
+      <div class="md:col-span-1 md:row-span-1 relative group overflow-hidden bg-neutral-900">
+        <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+             style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA6gPtnzQ9tDfJo8lzEoRaWClqkxiKlbhj8T62AlCafYg1J1Ik21w_bUIMRu4Mx_AolI6p14bP6M3v7iEzGjjX2eOOzHDpAAtGeQQX8xjYOR4m_8A5U8AfwqCFjJgvbAtG1YjiTO_8eqqul0ZnCsm0AVjb1Wj84TsQCgao91Fenmfxm5DSzfePP9pgN3GG1BG7hJIFOZe4cb9SrEEkaRw0Ekh59nA6aJrYaXjLMIt79daCnYsVpnJsakwJzy5kZa5xexk4k0VMoc2cb')">
+        </div>
+      </div>
     </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section class="py-16 sm:py-20 bg-paper">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-12">
+      <span class="text-label-caps text-gold-dark mb-3 inline-block">Así de simple</span>
+      <h2 class="font-display text-3xl sm:text-4xl text-ink uppercase mb-4">Tu cita en 3 pasos</h2>
+      <div class="w-24 h-px bg-gold mx-auto"></div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-10">
+      <div class="relative text-center">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gold text-charcoal font-extrabold text-lg flex items-center justify-center">1</div>
+        <h3 class="text-lg font-semibold text-ink">Crea tu cuenta</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Regístrate en segundos con tu correo o número de teléfono.</p>
+      </div>
+      <div class="relative text-center">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gold text-charcoal font-extrabold text-lg flex items-center justify-center">2</div>
+        <h3 class="text-lg font-semibold text-ink">Elige tu servicio</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Selecciona tu barbero, el servicio y el horario que prefieras.</p>
+      </div>
+      <div class="relative text-center">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gold text-charcoal font-extrabold text-lg flex items-center justify-center">3</div>
+        <h3 class="text-lg font-semibold text-ink">Luce tu estilo</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Llega puntual y deja tu look en manos de profesionales.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="bg-charcoal">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 flex flex-col sm:flex-row items-center justify-between gap-6">
+    <div>
+      <h2 class="font-display text-2xl sm:text-3xl text-white">¿Listo para tu cambio de look?</h2>
+      <p class="text-neutral-400 mt-1">Agenda hoy y luce genial esta semana.</p>
+    </div>
+    <a routerLink="/reservas" class="btn-gold px-10 py-4 text-center inline-block">
+      Reservar ahora
+    </a>
   </div>
 </section>

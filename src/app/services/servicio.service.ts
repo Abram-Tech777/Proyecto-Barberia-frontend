@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, timeout } from 'rxjs';
 import { Servicio } from '../models/servicio';
 
 @Injectable({
@@ -12,6 +12,18 @@ export class ServicioService {
   constructor(private http: HttpClient) {}
 
   obtenerServicios(): Observable<Servicio[]> {
-    return this.http.get<Servicio[]>(this.apiUrl);
+    return this.http.get<Servicio[]>(this.apiUrl).pipe(timeout(10000));
+  }
+
+  crearServicio(servicio: Servicio): Observable<Servicio> {
+    return this.http.post<Servicio>(`${this.apiUrl}/agregar`, servicio).pipe(timeout(10000));
+  }
+
+  actualizarServicio(id: number, servicio: Servicio): Observable<Servicio> {
+    return this.http.put<Servicio>(`${this.apiUrl}/${id}`, servicio).pipe(timeout(10000));
+  }
+
+  eliminarServicio(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(timeout(10000));
   }
 }

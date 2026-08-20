@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BarberoService } from '../../services/barbero.service';
 import { CitaService } from '../../services/cita.service';
+import { AuthService } from '../../services/auth.service';
 import { Barbero } from '../../models/barbero';
 
 @Component({
@@ -15,7 +16,7 @@ import { Barbero } from '../../models/barbero';
 })
 export class ReservasComponent implements OnInit {
   barberos: Barbero[] = [];
-  cargando = true;
+  cargandoBarberos = true;
 
   nombreCliente = '';
   celularCliente = '';
@@ -26,25 +27,33 @@ export class ReservasComponent implements OnInit {
   enviando = false;
   mensajeExito = '';
   error = '';
+  errorBarberos = '';
 
   constructor(
     private barberoService: BarberoService,
     private citaService: CitaService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    const usuario = this.authService.getSesion();
+    if (usuario) {
+      this.nombreCliente = usuario.nombreUsuario ?? '';
+      this.celularCliente = usuario.telefono ?? '';
+    }
     this.barberoService.obtenerBarberosActivos().subscribe({
       next: (data) => {
         this.barberos = data;
         if (this.barberos.length > 0) {
           this.barberoId = this.barberos[0].id;
         }
-        this.cargando = false;
+        this.cargandoBarberos = false;
       },
       error: (err) => {
         console.error('Error al obtener barberos:', err);
-        this.cargando = false;
+        this.cargandoBarberos = false;
+        this.errorBarberos = 'No se pudieron cargar los barberos. Verifica que el backend esté corriendo.';
       },
     });
   }

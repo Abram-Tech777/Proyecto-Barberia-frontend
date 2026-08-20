@@ -1,29 +1,117 @@
-<div class="bg-neutral-950 min-h-[60vh]">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-    <h2 class="text-3xl sm:text-4xl font-bold text-neutral-100">Nuestros Servicios</h2>
-    <p class="text-neutral-400 mt-2">Elige tu estilo y reserva con nosotros.</p>
+<div class="min-h-screen bg-paper">
 
-    <div *ngIf="cargando" class="mt-8 text-neutral-400">Cargando servicios...</div>
-
-    <div *ngIf="!cargando && servicios.length === 0" class="mt-8 text-neutral-400">
-      No hay servicios registrados. Agrega servicios desde el backend primero.
-    </div>
-
-    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div *ngFor="let s of servicios"
-           class="bg-neutral-900 border border-neutral-800 rounded-lg p-6 flex flex-col">
-        <div class="text-3xl mb-3">✂️</div>
-        <h3 class="text-neutral-100 text-lg font-semibold">{{ s.nombre }}</h3>
-        <p class="text-neutral-400 text-sm mt-1 flex-1">{{ s.descripcion }}</p>
-        <div class="mt-4 flex items-center justify-between">
-          <span class="text-neutral-500 text-sm">{{ s.duracionMinutos }} min</span>
-          <span class="text-amber-500 font-bold text-lg">{{ s.precioBase | currency: 'PEN' }}</span>
+  <!-- HERO -->
+  <section class="relative bg-charcoal text-white overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.07]"
+         style="background-image: repeating-linear-gradient(0deg, transparent, transparent 39px, #fff 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, #fff 40px);"></div>
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-gold/10 blur-3xl"></div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-24 relative">
+      <span class="text-label-caps text-gold-light inline-flex items-center gap-3">
+        <span class="w-10 h-px bg-gold"></span> Iron &amp; Oak · Barbería
+      </span>
+      <h1 class="font-display text-4xl sm:text-5xl uppercase mt-4 tracking-tight">
+        Nuestros <span class="text-gold-light">Servicios</span>
+      </h1>
+      <div class="w-24 h-px bg-gold mt-6"></div>
+      <p class="text-neutral-300 mt-5 max-w-2xl leading-relaxed">
+        Cada servicio está ejecutado con precisión artesanal y herramientas de acero templado.
+        Elige tu estilo, agrega tu barbero favorito y reserva tu horario.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-8">
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gold-light">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+          </svg>
+          <span class="text-sm text-neutral-300">Barberos certificados</span>
         </div>
-        <a routerLink="/reservas"
-           class="mt-4 block text-center bg-amber-500 hover:bg-amber-400 text-neutral-950 font-semibold py-2 rounded transition-colors">
-          Reservar
-        </a>
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gold-light">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-sm text-neutral-300">Atención puntual</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gold-light">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+          </svg>
+          <span class="text-sm text-neutral-300">Paga como prefieras</span>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- GRILLA -->
+  <section class="py-16 sm:py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-12">
+        <span class="text-label-caps text-gold-dark mb-3 inline-block">Carta de servicios</span>
+        <h2 class="font-display text-3xl sm:text-4xl text-ink uppercase mb-4">Elige tu servicio</h2>
+        <div class="w-24 h-px bg-gold mx-auto"></div>
+      </div>
+
+      <div *ngIf="cargando" class="text-center py-12">
+        <div class="inline-block w-10 h-10 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-muted mt-4">Cargando servicios...</p>
+      </div>
+
+      <div *ngIf="error && !cargando" class="max-w-xl mx-auto text-center bg-red-50 border border-red-300 text-red-700 text-sm px-4 py-3">
+        {{ error }}
+      </div>
+
+      <div *ngIf="!cargando && servicios.length === 0" class="text-center py-12 text-muted">
+        Aún no hay servicios registrados. Vuelve pronto.
+      </div>
+
+      <div *ngIf="!cargando" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let s of servicios; let i = index"
+             class="group bg-paper-low border border-line-light hover:border-gold-dark hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col relative overflow-hidden">
+          <span class="absolute -top-3 -right-2 font-display text-7xl text-line-light/40 group-hover:text-gold/30 transition-colors select-none">
+            {{ (i + 1) < 10 ? '0' + (i + 1) : i + 1 }}
+          </span>
+          <div class="p-6 pb-0 relative">
+            <div class="flex items-start justify-between">
+              <div class="w-12 h-12 bg-charcoal text-gold-light flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.848 8.25l1.536.887M7.848 8.25a3 3 0 11-5.196-3 3 3 0 015.196 3zm1.536.887a2.165 2.165 0 011.083 1.839c.005.351.054.695.14 1.024M9.384 9.137l2.077 1.199M7.848 15.75l1.536-.887m-1.536.887a3 3 0 11-5.196 3 3 3 0 015.196-3zm1.536-.887a2.165 2.165 0 001.083-1.838c.005-.352.054-.695.14-1.025m-1.223 2.863l2.077-1.199m0-3.328a4.323 4.323 0 012.068-1.379l5.58-2.253a.75.75 0 10-.772-1.286l-5.58 2.253a4.323 4.323 0 01-2.068 1.379m0 3.328a4.323 4.323 0 01-2.068 1.379l-5.58 2.253a.75.75 0 00.772 1.286l5.58-2.253a4.323 4.323 0 012.068-1.379m0-3.328a4.323 4.323 0 012.068 1.379m0 0v0" />
+                </svg>
+              </div>
+              <span class="inline-flex items-center gap-1.5 text-xs text-muted border border-line-light px-2 py-1">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-3.5 h-3.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {{ s.duracionMinutos }} min
+              </span>
+            </div>
+            <h3 class="mt-5 text-lg font-semibold text-ink group-hover:text-gold-dark transition-colors">{{ s.nombre }}</h3>
+            <p class="text-muted text-sm mt-2 leading-relaxed flex-1">{{ s.descripcion }}</p>
+          </div>
+          <div class="mt-6 border-t border-line-light/60 p-6 flex items-center justify-between">
+            <div>
+              <span class="block text-xs text-muted uppercase tracking-wider">Desde</span>
+              <span class="text-gold-dark font-bold text-xl">{{ s.precioBase | currency: 'PEN' }}</span>
+            </div>
+            <a routerLink="/reservas"
+               class="btn-gold px-5 py-2.5 text-center inline-block text-sm">
+              Reservar
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-charcoal text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.07]"
+         style="background-image: repeating-linear-gradient(0deg, transparent, transparent 39px, #fff 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, #fff 40px);"></div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 relative flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div>
+        <h2 class="font-display text-2xl sm:text-3xl uppercase">¿Listo para tu cambio de look?</h2>
+        <p class="text-neutral-400 mt-2">Agenda hoy y luce genial esta semana.</p>
+      </div>
+      <a routerLink="/reservas" class="btn-gold px-10 py-4 text-center inline-block whitespace-nowrap">
+        Reservar ahora
+      </a>
+    </div>
+  </section>
 </div>

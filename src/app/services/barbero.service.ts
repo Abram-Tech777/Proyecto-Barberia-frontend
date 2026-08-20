@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, timeout } from 'rxjs';
 import { Barbero } from '../models/barbero';
 
 @Injectable({
@@ -12,6 +12,22 @@ export class BarberoService {
   constructor(private http: HttpClient) {}
 
   obtenerBarberosActivos(): Observable<Barbero[]> {
-    return this.http.get<Barbero[]>(`${this.apiUrl}/activos`);
+    return this.http.get<Barbero[]>(`${this.apiUrl}/activos`).pipe(timeout(10000));
+  }
+
+  listarBarberos(): Observable<Barbero[]> {
+    return this.http.get<Barbero[]>(this.apiUrl).pipe(timeout(10000));
+  }
+
+  crearBarbero(barbero: Barbero): Observable<Barbero> {
+    return this.http.post<Barbero>(`${this.apiUrl}/registrar`, barbero).pipe(timeout(10000));
+  }
+
+  actualizarBarbero(id: number, barbero: Barbero): Observable<Barbero> {
+    return this.http.put<Barbero>(`${this.apiUrl}/${id}`, barbero).pipe(timeout(10000));
+  }
+
+  eliminarBarbero(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(timeout(10000));
   }
 }
