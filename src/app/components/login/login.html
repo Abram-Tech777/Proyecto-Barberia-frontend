@@ -1,0 +1,44 @@
+<div class="min-h-[70vh] flex items-center justify-center px-4">
+  <div class="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-2xl p-8 shadow-xl">
+    <h2 class="text-2xl font-bold text-neutral-100 mb-1">Bienvenido</h2>
+    <p class="text-neutral-400 text-sm mb-6">Inicia sesión para reservar tu cita.</p>
+
+    <div *ngIf="error"
+         class="mb-4 bg-red-950/60 border border-red-800 text-red-300 text-sm px-4 py-3 rounded-lg">
+      {{ error }}
+    </div>
+
+    <form (ngSubmit)="ingresar()" class="space-y-4">
+      <div>
+        <label class="block text-sm text-neutral-300 mb-1">Correo</label>
+        <input type="email" name="correo" [(ngModel)]="correo" required
+               placeholder="tucorreo@ejemplo.com"
+               class="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2.5 text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-amber-500">
+      </div>
+
+      <div>
+        <label class="block text-sm text-neutral-300 mb-1">Clave</label>
+        <input type="password" name="clave" [(ngModel)]="clave" required
+               placeholder="Tu contraseña"
+               class="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2.5 text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-amber-500">
+      </div>
+
+      <button type="submit" [disabled]="cargando"
+              class="w-full bg-amber-500 hover:bg-amber-400 disabled:opacity-60 text-neutral-950 font-semibold py-2.5 rounded-lg transition-colors">
+        {{ cargando ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+    </form>
+
+    <div class="mt-5 pt-5 border-t border-neutral-800 text-center">
+      <button type="button" disabled title="Próximamente"
+              class="w-full bg-neutral-800 border border-neutral-700 text-neutral-300 py-2.5 rounded-lg opacity-60 cursor-not-allowed">
+        Continuar con Google (Próximamente)
+      </button>
+    </div>
+
+    <p class="mt-5 text-sm text-neutral-400 text-center">
+      ¿No tienes cuenta?
+      <a routerLink="/registro" class="text-amber-500 hover:underline">Crear cuenta</a>
+    </p>
+  </div>
+</div>

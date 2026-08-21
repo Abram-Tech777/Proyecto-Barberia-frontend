@@ -1,0 +1,31 @@
+<div class="min-h-[70vh] bg-paper">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <div class="mb-10">
+      <span class="text-label-caps text-gold-dark mb-2 inline-block">Panel de administración</span>
+      <h2 class="font-display text-3xl sm:text-4xl text-ink uppercase">Gestión del negocio</h2>
+      <p class="text-muted mt-3">Selecciona un módulo para administrar.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <a *ngFor="let m of modulosVisibles" routerLink="{{ m.ruta }}"
+         class="group bg-paper-low border border-line-light hover:border-gold p-6 transition-colors">
+        <div class="w-12 h-12 mb-4 bg-charcoal group-hover:bg-gold flex items-center justify-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"
+               class="w-6 h-6 text-gold-light group-hover:text-charcoal transition-colors">
+            <path *ngIf="m.icono === 'users'" stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-2.38a4 4 0 10-2.62 0M9 8a4 4 0 108 0 4 4 0 00-8 0z" />
+            <path *ngIf="m.icono === 'barbero'" stroke-linecap="round" stroke-linejoin="round" d="M3 7h11v2H3zM15 7h6M4 5h11v2H4zM17 3h2v4h-2zM6 17l4-3 4 3M8 10v5M12 10v7M4 21h16" />
+            <path *ngIf="m.icono === 'servicio'" stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            <path *ngIf="m.icono === 'cita'" stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            <path *ngIf="m.icono === 'producto'" stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4v10l8 4 8-4V7zM12 3v10m-8-6l8 4 8-4" />
+            <path *ngIf="m.icono === 'venta'" stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 4.6a1 1 0 00.9 1.4H19M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z" />
+            <path *ngIf="m.icono === 'devolucion'" stroke-linecap="round" stroke-linejoin="round" d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8m0-5v5h5m3 4l3 3 4-4" />
+            <path *ngIf="m.icono === 'promocion'" stroke-linecap="round" stroke-linejoin="round" d="M9 14l6-6m-5.5 1.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 17.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM12 3l9 5-9 5-9-5 9-5z" />
+            <path *ngIf="m.icono === 'resenia'" stroke-linecap="round" stroke-linejoin="round" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        </div>
+        <h3 class="text-ink font-semibold text-lg group-hover:text-gold-dark transition-colors">{{ m.titulo }}</h3>
+        <p class="text-muted text-sm mt-1">{{ m.desc }}</p>
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,95 @@
+<div class="min-h-[70vh] bg-paper">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <span class="text-label-caps text-gold-dark mb-2 inline-block">Administración</span>
+        <h2 class="font-display text-3xl text-ink uppercase">Promociones</h2>
+      </div>
+      <button (click)="cargarPromociones()"
+              class="bg-charcoal hover:bg-walnut text-gold-light text-label-caps px-4 py-2 transition-colors">
+        Actualizar
+      </button>
+    </div>
+
+    <div *ngIf="error" class="mb-4 bg-red-50 border border-red-300 text-red-700 text-sm px-4 py-3">
+      {{ error }}
+    </div>
+    <div *ngIf="mensaje" class="mb-4 bg-green-50 border border-green-300 text-green-700 text-sm px-4 py-3">
+      {{ mensaje }}
+    </div>
+
+    <div class="mb-8 bg-paper-low border border-line-light p-6">
+      <h3 class="font-semibold text-ink mb-4">{{ editando ? 'Editar promoción' : 'Nueva promoción' }}</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm text-muted mb-1">Nombre *</label>
+          <input [(ngModel)]="nombre" placeholder="Ej. Semana dorada"
+                 class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">% Descuento</label>
+          <input [(ngModel)]="porcentajeDescuento" type="number" step="0.01" min="0" max="100"
+                 class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">Fecha inicio *</label>
+          <input [(ngModel)]="fechaInicio" type="date"
+                 class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">Fecha fin *</label>
+          <input [(ngModel)]="fechaFin" type="date"
+                 class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+        </div>
+      </div>
+      <div class="mt-4 flex items-center gap-3">
+        <label class="flex items-center gap-2 text-sm text-muted">
+          <input [(ngModel)]="activo" type="checkbox" class="accent-gold-dark">
+          Activa
+        </label>
+        <button (click)="guardar()" class="btn-gold px-5 py-2 text-center inline-block">
+          {{ editando ? 'Guardar' : 'Registrar' }}
+        </button>
+        <button *ngIf="editando" (click)="nueva()"
+                class="border border-line text-muted px-5 py-2 hover:border-gold-dark hover:text-gold-dark transition-colors">
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="cargando" class="text-center py-10 text-muted">Cargando promociones...</div>
+
+    <div *ngIf="!cargando" class="bg-paper-low border border-line-light overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-line-light/40 text-muted text-left">
+            <th class="px-4 py-3">Nombre</th>
+            <th class="px-4 py-3">% Desc.</th>
+            <th class="px-4 py-3">Desde</th>
+            <th class="px-4 py-3">Hasta</th>
+            <th class="px-4 py-3">Estado</th>
+            <th class="px-4 py-3 text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of promociones" class="border-t border-line-light text-ink">
+            <td class="px-4 py-3 font-medium">{{ p.nombre }}</td>
+            <td class="px-4 py-3">{{ p.porcentajeDescuento ?? '—' }}%</td>
+            <td class="px-4 py-3">{{ p.fechaInicio }}</td>
+            <td class="px-4 py-3">{{ p.fechaFin }}</td>
+            <td class="px-4 py-3">
+              <span [ngClass]="p.activo ? 'text-green-700' : 'text-red-600'">{{ p.activo ? 'Activa' : 'Inactiva' }}</span>
+            </td>
+            <td class="px-4 py-3 text-right whitespace-nowrap">
+              <button (click)="editar(p)" class="text-gold-dark hover:underline mr-3">Editar</button>
+              <button (click)="eliminar(p)" class="text-red-600 hover:underline">Eliminar</button>
+            </td>
+          </tr>
+          <tr *ngIf="promociones.length === 0">
+            <td colspan="6" class="px-4 py-10 text-center text-muted">No hay promociones registradas.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

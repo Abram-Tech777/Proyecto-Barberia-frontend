@@ -1,0 +1,137 @@
+<div class="min-h-[70vh] bg-paper">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <span class="text-label-caps text-gold-dark mb-2 inline-block">Administración</span>
+        <h2 class="font-display text-3xl text-ink uppercase">Productos</h2>
+      </div>
+      <button (click)="cargarProductos()"
+              class="bg-charcoal hover:bg-walnut text-gold-light text-label-caps px-4 py-2 transition-colors">
+        Actualizar
+      </button>
+    </div>
+
+    <div *ngIf="error" class="mb-4 bg-red-50 border border-red-300 text-red-700 text-sm px-4 py-3">
+      {{ error }}
+    </div>
+    <div *ngIf="mensaje" class="mb-4 bg-green-50 border border-green-300 text-green-700 text-sm px-4 py-3">
+      {{ mensaje }}
+    </div>
+
+    <div class="mb-8 bg-paper-low border border-line-light p-6">
+      <h3 class="font-semibold text-ink mb-4">{{ editando ? 'Editar producto' : 'Nuevo producto' }}</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm text-muted mb-1">Nombre *</label>
+          <input [(ngModel)]="nombre" placeholder="Ej. Máquina Wahl"
+                 class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">Marca *</label>
+          <input [(ngModel)]="marca" placeholder="Ej. Wahl"
+                 class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">Precio (S/) *</label>
+          <input [(ngModel)]="precio" type="number" step="0.01" min="0"
+                 class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">Stock *</label>
+          <input [(ngModel)]="stock" type="number" min="0"
+                 class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">Stock mínimo</label>
+          <input [(ngModel)]="stockMinimo" type="number" min="0"
+                 class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">Categoría</label>
+          <select [(ngModel)]="categoria"
+                  class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+            <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+        <div class="sm:col-span-2 lg:col-span-4">
+          <label class="block text-sm text-muted mb-1">Imagen del producto</label>
+          <div class="flex items-start gap-4">
+            <div class="w-24 h-24 bg-neutral-200 border border-line-light shrink-0 overflow-hidden relative">
+              <img *ngIf="imagenUrl" [src]="urlImagen(imagenUrl)" class="w-full h-full object-cover">
+              <div *ngIf="!imagenUrl" class="w-full h-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-neutral-400">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A1.5 1.5 0 0021.75 19.5V4.5A1.5 1.5 0 0020.25 3H3.75A1.5 1.5 0 002.25 4.5v15A1.5 1.5 0 003.75 21z" />
+                </svg>
+              </div>
+            </div>
+            <div class="flex-1">
+              <label class="inline-block cursor-pointer bg-charcoal hover:bg-walnut text-gold-light text-label-caps px-4 py-2 transition-colors">
+                {{ imagenSubiendo ? 'Subiendo...' : 'Subir imagen' }}
+                <input type="file" accept="image/*" (change)="alSeleccionarImagen($event)" class="hidden" [disabled]="imagenSubiendo">
+              </label>
+              <p class="text-xs text-muted mt-2">La imagen se guarda en el servidor y no se borra al editar el producto.</p>
+              <label class="block text-sm text-muted mt-3 mb-1">O pega una URL externa</label>
+              <input [(ngModel)]="imagenUrl" placeholder="https://..."
+                     class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1">Descripción corta *</label>
+          <input [(ngModel)]="descripcionCorta" placeholder="Resumen breve"
+                 class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+        </div>
+      </div>
+      <div class="mt-4">
+        <label class="block text-sm text-muted mb-1">Descripción larga</label>
+        <textarea [(ngModel)]="descripcionLarga" rows="2" placeholder="Detalle completo"
+                  class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark"></textarea>
+      </div>
+      <div class="mt-4 flex gap-3">
+        <button (click)="guardar()" class="btn-gold px-5 py-2 text-center inline-block">
+          {{ editando ? 'Guardar' : 'Registrar' }}
+        </button>
+        <button *ngIf="editando" (click)="nueva()"
+                class="border border-line text-muted px-5 py-2 hover:border-gold-dark hover:text-gold-dark transition-colors">
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="cargando" class="text-center py-10 text-muted">Cargando productos...</div>
+
+    <div *ngIf="!cargando" class="bg-paper-low border border-line-light overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-line-light/40 text-muted text-left">
+            <th class="px-4 py-3">Nombre</th>
+            <th class="px-4 py-3">Marca</th>
+            <th class="px-4 py-3">Categoría</th>
+            <th class="px-4 py-3">Precio</th>
+            <th class="px-4 py-3">Stock</th>
+            <th class="px-4 py-3 text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of productos" class="border-t border-line-light text-ink">
+            <td class="px-4 py-3 font-medium">{{ p.nombre }}</td>
+            <td class="px-4 py-3">{{ p.marca }}</td>
+            <td class="px-4 py-3">{{ p.categoria || '—' }}</td>
+            <td class="px-4 py-3">{{ p.precio | currency: 'PEN' }}</td>
+            <td class="px-4 py-3">
+              <span [ngClass]="stockBajo(p) ? 'text-red-600 font-semibold' : ''">{{ p.stock }}</span>
+              <span *ngIf="stockBajo(p)" class="ml-1 text-red-600 text-xs">(bajo)</span>
+            </td>
+            <td class="px-4 py-3 text-right whitespace-nowrap">
+              <button (click)="editar(p)" class="text-gold-dark hover:underline mr-3">Editar</button>
+              <button (click)="eliminar(p)" class="text-red-600 hover:underline">Eliminar</button>
+            </td>
+          </tr>
+          <tr *ngIf="productos.length === 0">
+            <td colspan="6" class="px-4 py-10 text-center text-muted">No hay productos registrados.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

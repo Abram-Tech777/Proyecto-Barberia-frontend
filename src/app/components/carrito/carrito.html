@@ -1,0 +1,173 @@
+<div class="min-h-[70vh] bg-paper">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+
+    <div *ngIf="compraExitosa" class="max-w-2xl mx-auto text-center py-16">
+      <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 text-green-600">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+      </div>
+      <h2 class="font-display text-3xl text-ink uppercase mb-3">¡Compra registrada!</h2>
+      <p class="text-muted mb-2">Tu pedido quedó en estado <strong>PENDIENTE_PAGO</strong>.</p>
+      <p class="text-ink mb-8">Total a pagar: <span class="font-bold text-gold-dark">{{ ultimoTotal | currency: 'PEN' }}</span></p>
+      <div class="mb-8 p-4 bg-paper-low border border-line-light text-sm text-muted">
+        Recoge tu pedido en tienda. Puedes coordinar el pago por WhatsApp con nuestro equipo.
+      </div>
+      <button (click)="seguirComprando()" class="btn-gold px-8 py-3 text-center inline-block">
+        Seguir comprando
+      </button>
+    </div>
+
+    <ng-container *ngIf="!compraExitosa">
+      <div class="mb-8">
+        <span class="text-label-caps text-gold-dark mb-2 inline-block">Resumen</span>
+        <h2 class="font-display text-3xl text-ink uppercase">Tu carrito</h2>
+      </div>
+
+      <div *ngIf="error" class="mb-4 bg-red-50 border border-red-300 text-red-700 text-sm px-4 py-3">
+        {{ error }}
+      </div>
+
+      <div *ngIf="items.length === 0" class="text-center py-16">
+        <p class="text-muted mb-6">Tu carrito está vacío.</p>
+        <button (click)="seguirComprando()" class="btn-gold px-8 py-3 text-center inline-block">
+          Ir a la tienda
+        </button>
+      </div>
+
+      <div *ngIf="items.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 bg-paper-low border border-line-light overflow-hidden">
+          <div *ngFor="let item of items" class="flex items-center gap-4 p-4 border-b border-line-light/60">
+            <div class="w-16 h-16 bg-neutral-200 shrink-0 overflow-hidden relative">
+              <img *ngIf="item.producto.imagenUrl" [src]="urlImagen(item.producto.imagenUrl)" class="w-full h-full object-cover">
+              <div *ngIf="!item.producto.imagenUrl" class="w-full h-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-neutral-400">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                </svg>
+              </div>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-ink font-semibold">{{ item.producto.nombre }}</h3>
+              <p class="text-muted text-sm">{{ item.producto.precio | currency: 'PEN' }} c/u</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button (click)="cambiarCantidad(item.producto.id, item.cantidad - 1)"
+                      class="w-8 h-8 border border-line-light text-ink hover:border-gold-dark transition-colors">−</button>
+              <span class="w-10 text-center text-ink">{{ item.cantidad }}</span>
+              <button (click)="cambiarCantidad(item.producto.id, item.cantidad + 1)"
+                      class="w-8 h-8 border border-line-light text-ink hover:border-gold-dark transition-colors">+</button>
+            </div>
+            <span class="w-24 text-right font-semibold text-ink">{{ item.producto.precio * item.cantidad | currency: 'PEN' }}</span>
+            <button (click)="quitar(item.producto.id)" class="text-red-600 hover:underline text-sm">Quitar</button>
+          </div>
+        </div>
+
+        <div class="bg-charcoal text-white p-6 h-fit">
+          <h3 class="text-label-caps text-gold-light uppercase mb-4">Resumen</h3>
+          <div class="flex justify-between mb-2 text-sm text-neutral-300">
+            <span>Productos</span><span>{{ items.length }}</span>
+          </div>
+          <div class="flex justify-between mb-4 text-sm text-neutral-300">
+            <span>Despacho</span><span>Recojo en tienda</span>
+          </div>
+          <div class="border-t border-line pt-3 flex justify-between mb-6">
+            <span class="font-semibold">Total</span>
+            <span class="font-bold text-gold-light">{{ total | currency: 'PEN' }}</span>
+          </div>
+
+          <label class="block text-sm text-neutral-300 mb-2">Medio de pago</label>
+          <div class="grid grid-cols-2 gap-2 mb-6">
+            <button *ngFor="let m of mediosPago"
+                    (click)="medioPago = m"
+                    [ngClass]="medioPago === m
+                      ? 'bg-gold text-charcoal border-gold'
+                      : 'bg-charcoal border border-line text-neutral-300 hover:border-gold hover:text-gold-light'"
+                    class="px-3 py-2.5 text-label-caps uppercase transition-colors">
+              {{ m }}
+            </button>
+          </div>
+
+          <button (click)="confirmarCompra()" [disabled]="enviando"
+                  class="btn-gold w-full px-5 py-3 text-center inline-block disabled:opacity-50 disabled:cursor-not-allowed">
+            {{ enviando ? 'Procesando...' : 'Confirmar compra' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- PANELES DE PAGO SEGÚN MÉTODO -->
+      <div *ngIf="items.length > 0" class="mt-8 max-w-3xl">
+
+        <!-- YAPE / PLIN -->
+        <div *ngIf="medioPago === 'YAPE' || medioPago === 'PLIN'"
+             class="bg-paper-low border border-line-light p-6 sm:p-8 flex flex-col sm:flex-row gap-8 items-center">
+          <div class="w-56 shrink-0">
+            <div class="bg-white border border-line-light p-3">
+              <img [src]="yapeQr" alt="QR {{ medioPago }}" class="w-full h-auto">
+            </div>
+            <p class="text-center text-xs text-muted mt-2 uppercase tracking-wider">Escanea para pagar</p>
+          </div>
+          <div class="text-center sm:text-left">
+            <h3 class="text-lg font-semibold text-ink flex items-center justify-center sm:justify-start gap-2">
+              Paga con {{ medioPago === 'YAPE' ? 'Yape' : 'Plin' }}
+            </h3>
+            <ol class="mt-4 space-y-3 text-sm text-muted">
+              <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-gold text-charcoal font-bold text-xs flex items-center justify-center shrink-0">1</span>Abre tu app {{ medioPago === 'YAPE' ? 'Yape' : 'Plin' }} y elige “Pagar con QR”.</li>
+              <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-gold text-charcoal font-bold text-xs flex items-center justify-center shrink-0">2</span>Escanea el código con tu celular.</li>
+              <li class="flex gap-3"><span class="w-5 h-5 rounded-full bg-gold text-charcoal font-bold text-xs flex items-center justify-center shrink-0">3</span>Confirma el monto de <strong class="text-ink">{{ total | currency: 'PEN' }}</strong> y ¡listo!</li>
+            </ol>
+            <div class="mt-5 inline-block border border-gold/50 px-4 py-2 text-sm">
+              <span class="text-muted">Cuenta {{ medioPago === 'YAPE' ? 'Yape' : 'Plin' }}: </span>
+              <span class="text-ink font-semibold">{{ medioPago === 'YAPE' ? numeroYape : numeroPlin }}</span>
+            </div>
+            <p class="mt-4 text-xs text-muted">
+              Si prefieres, coordina el pago por WhatsApp con nuestro equipo y recoge en tienda.
+            </p>
+          </div>
+        </div>
+
+        <!-- TARJETA -->
+        <div *ngIf="medioPago === 'TARJETA'" class="bg-paper-low border border-line-light p-6 sm:p-8">
+          <h3 class="text-lg font-semibold text-ink mb-1">Datos de tu tarjeta</h3>
+          <p class="text-xs text-muted mb-6">Pago seguro y cifrado. En esta demo el pago se confirma al recoger en tienda.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+              <label class="block text-sm text-muted mb-1">Número de tarjeta</label>
+              <input [(ngModel)]="cardNumber" (ngModelChange)="formatearNumeroTarjeta()" inputmode="numeric" placeholder="1234 5678 9012 3456"
+                     class="w-full bg-white border border-line-light px-3 py-2.5 text-ink tracking-widest focus:outline-none focus:border-gold-dark">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-sm text-muted mb-1">Nombre en la tarjeta</label>
+              <input [(ngModel)]="cardNombre" placeholder="Como aparece en la tarjeta"
+                     class="w-full bg-white border border-line-light px-3 py-2.5 text-ink uppercase focus:outline-none focus:border-gold-dark">
+            </div>
+            <div>
+              <label class="block text-sm text-muted mb-1">Vencimiento</label>
+              <input [(ngModel)]="cardExpiry" (ngModelChange)="formatearVencimiento()" inputmode="numeric" placeholder="MM/AA"
+                     class="w-full bg-white border border-line-light px-3 py-2.5 text-ink focus:outline-none focus:border-gold-dark">
+            </div>
+            <div>
+              <label class="block text-sm text-muted mb-1">CVV</label>
+              <input [(ngModel)]="cardCvv" inputmode="numeric" maxlength="4" placeholder="123"
+                     class="w-full bg-white border border-line-light px-3 py-2.5 text-ink focus:outline-none focus:border-gold-dark">
+            </div>
+          </div>
+          <div class="mt-5 flex items-center gap-2 text-xs text-muted">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4 text-gold-dark">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+            Tus datos están protegidos. No guardamos información de tarjeta.
+          </div>
+        </div>
+
+        <!-- EFECTIVO -->
+        <div *ngIf="medioPago === 'EFECTIVO'" class="bg-paper-low border border-line-light p-6 sm:p-8">
+          <h3 class="text-lg font-semibold text-ink mb-2">Pago en efectivo</h3>
+          <p class="text-sm text-muted leading-relaxed">
+            Puedes pagar el monto de <strong class="text-ink">{{ total | currency: 'PEN' }}</strong> en efectivo
+            cuando recojas tu pedido en tienda. Prepara el monto exacto si es posible.
+          </p>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
