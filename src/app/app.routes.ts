@@ -16,19 +16,30 @@ import { AdminPromociones } from './components/admin-promociones/admin-promocion
 import { AdminResenias } from './components/admin-resenias/admin-resenias';
 import { Tienda } from './components/tienda/tienda';
 import { Carrito } from './components/carrito/carrito';
+import { ProductoDetalle } from './components/producto-detalle/producto-detalle';
 import { adminGuard } from './guards/admin-guard';
 import { panelGuard } from './guards/panel-guard';
 import { clienteGuard } from './guards/cliente-guard';
+import { barberoPanelGuard } from './guards/barbero-panel-guard';
+import { PanelBarbero } from './components/panel-barbero/panel-barbero';
+import { MisReservas } from './components/mis-reservas/mis-reservas';
+import { MisCompras } from './components/mis-compras/mis-compras';
+import { MiTarjeta } from './components/mi-tarjeta/mi-tarjeta';
 
 export const routes: Routes = [
   { path: '', component: Home },
   { path: 'servicios', component: ServiciosComponent },
   { path: 'tienda', component: Tienda },
+  { path: 'producto/:id', component: ProductoDetalle },
   { path: 'carrito', component: Carrito, canActivate: [clienteGuard] },
   { path: 'reservas', component: ReservasComponent, canActivate: [clienteGuard] },
+  { path: 'mis-reservas', component: MisReservas, canActivate: [clienteGuard] },
+  { path: 'mis-compras', component: MisCompras, canActivate: [clienteGuard] },
+  { path: 'mi-tarjeta', component: MiTarjeta, canActivate: [clienteGuard] },
   { path: 'login', component: Login },
   { path: 'registro', component: Registro },
   { path: 'admin', component: AdminHub, canActivate: [panelGuard] },
+  { path: 'mi-panel', component: PanelBarbero, canActivate: [barberoPanelGuard] },
   { path: 'admin/usuarios', component: AdminUsuarios, canActivate: [adminGuard] },
   { path: 'admin/barberos', component: AdminBarberos, canActivate: [adminGuard] },
   { path: 'admin/servicios', component: AdminServicios, canActivate: [panelGuard] },

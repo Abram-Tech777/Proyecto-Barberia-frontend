@@ -2,7 +2,7 @@
 <section class="relative h-[90vh] min-h-[600px] flex items-center overflow-hidden bg-charcoal">
   <div class="absolute inset-0 z-0">
     <div class="w-full h-full bg-cover bg-center bg-no-repeat"
-         style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB8ujFA1JgoqfAdaeYbm86pwYAxVMbm40gXBGDDlFQ1C9MUr97DOsSkt0dLTvfsz3kbYrU7tbkMGwuwOhcUma4ZABHKTz9F_dh6xWXeEh3mQ8Bmqt73aXlQJ4bxZ6DPDtlmMDekIMysjjS3cXDepvU_gbfjIQzeIdfwn0MC7n_W1zvhMyOj3KS4DADajzt6Sk0uWqalSvDW2EuJqW-t_JEIx3h2ke79AyAWrscZ-dZBvC-TTvgiXIBM3vldyi5UcC5EKMFO-AOaoZfy')">
+         style="background-image: url('/img/banner-inicio.jpeg')">
       <div class="absolute inset-0 charcoal-overlay"></div>
     </div>
   </div>
@@ -57,7 +57,9 @@
             <p *ngIf="s.descripcion" class="text-sm text-muted mt-1">{{ s.descripcion }}</p>
             <p class="text-xs text-muted mt-1 uppercase tracking-wider">{{ s.duracionMinutos }} min</p>
           </div>
-          <span class="text-label-caps text-muted whitespace-nowrap ml-4">{{ s.precioBase | currency: 'PEN' }}</span>
+          <span class="text-label-caps whitespace-nowrap ml-4" [class.text-muted]="porcentajeDescuento(s) === 0" [class.text-gold-dark]="porcentajeDescuento(s) > 0">
+            <span *ngIf="porcentajeDescuento(s) > 0" class="line-through mr-1.5">{{ s.precioBase | currency: 'PEN' }}</span>{{ precioFinal(s) | currency: 'PEN' }}
+          </span>
         </div>
       </div>
     </div>
@@ -72,7 +74,7 @@
         <span class="text-label-caps text-gold-light mb-4 block">Nuestra herencia</span>
         <h2 class="font-display text-3xl sm:text-4xl mb-8 uppercase">Precisión y Tradición</h2>
         <div class="text-neutral-300 space-y-6 max-w-2xl leading-relaxed">
-          <p>En Iron &amp; Oak, entendemos que la barbería es una forma de arte que se ha perfeccionado durante siglos. No solo cortamos el cabello; esculpimos identidades y preservamos el legado del caballero moderno.</p>
+          <p>En Corte Real, entendemos que la barbería es una forma de arte que se ha perfeccionado durante siglos. No solo cortamos el cabello; esculpimos identidades y preservamos el legado del caballero moderno.</p>
           <p>Nuestra tienda combina la estética industrial de un taller mecánico con el lujo refinado de un club social de mediados de siglo. Cada detalle, desde nuestras sillas de cuero vintage hasta nuestras herramientas de acero templado, ha sido seleccionado para ofrecer una experiencia de santuario y precisión.</p>
         </div>
         <div class="mt-10 flex gap-12">
@@ -106,11 +108,12 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[250px]">
       <div class="md:col-span-2 md:row-span-2 relative group overflow-hidden bg-neutral-900">
         <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-             style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB8ujFA1JgoqfAdaeYbm86pwYAxVMbm40gXBGDDlFQ1C9MUr97DOsSkt0dLTvfsz3kbYrU7tbkMGwuwOhcUma4ZABHKTz9F_dh6xWXeEh3mQ8Bmqt73aXlQJ4bxZ6DPDtlmMDekIMysjjS3cXDepvU_gbfjIQzeIdfwn0MC7n_W1zvhMyOj3KS4DADajzt6Sk0uWqalSvDW2EuJqW-t_JEIx3h2ke79AyAWrscZ-dZBvC-TTvgiXIBM3vldyi5UcC5EKMFO-AOaoZfy')">
+             style="background-image: url('/img/banner-inicio.jpeg')">
         </div>
-        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <span class="text-label-caps text-white border border-white px-4 py-2">The Workshop</span>
-        </div>
+        <a routerLink="/tienda" aria-label="Explora la Tienda"
+           class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+          <span class="text-label-caps text-white border border-white px-4 py-2 hover:bg-gold hover:border-gold hover:text-charcoal transition-colors">Explora la Tienda</span>
+        </a>
       </div>
       <div class="md:col-span-1 md:row-span-1 relative group overflow-hidden bg-neutral-900">
         <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"

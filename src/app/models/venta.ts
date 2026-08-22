@@ -13,6 +13,7 @@ export interface Venta {
   coordenadasEnvio?: string;
   referenciaDireccion?: string;
   costoEnvio?: number;
+  igv?: number;
   estadoPedido: string;
   detalles?: DetalleVenta[];
 }

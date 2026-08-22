@@ -3,5 +3,7 @@ export interface Barbero {
   nombreCompleto: string;
   porcentajeComision?: number;
   usuario?: { id: number } | null;
+  usuarioEmail?: string | null;
+  usuarioRol?: string | null;
   activo: boolean;
 }

@@ -39,7 +39,7 @@
             <td class="px-4 py-3">{{ c.id }}</td>
             <td class="px-4 py-3 font-medium">{{ c.nombreCliente }}</td>
             <td class="px-4 py-3">{{ c.celularCliente }}</td>
-            <td class="px-4 py-3">{{ c.barbero.nombreCompleto || '—' }}</td>
+            <td class="px-4 py-3">{{ c.barbero?.nombreCompleto || '—' }}</td>
             <td class="px-4 py-3">{{ formatearFecha(c.horaInicio) }}</td>
             <td class="px-4 py-3">
               <span [ngClass]="{

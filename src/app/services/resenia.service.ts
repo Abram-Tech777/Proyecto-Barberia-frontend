@@ -19,6 +19,14 @@ export class ReseniaService {
     return this.http.get<Resenia[]>(`${this.apiUrl}/producto/${productoId}`).pipe(timeout(10000));
   }
 
+  listarPorUsuario(usuarioId: number): Observable<Resenia[]> {
+    return this.http.get<Resenia[]>(`${this.apiUrl}/usuario/${usuarioId}`).pipe(timeout(10000));
+  }
+
+  agregarResenia(resenia: Omit<Resenia, 'id'>): Observable<Resenia> {
+    return this.http.post<Resenia>(`${this.apiUrl}/agregar`, resenia).pipe(timeout(10000));
+  }
+
   eliminarResenia(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(timeout(10000));
   }

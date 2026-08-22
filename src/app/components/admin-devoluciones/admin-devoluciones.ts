@@ -44,7 +44,7 @@ export class AdminDevoluciones implements OnInit {
     this.mensaje = '';
     this.error = '';
     const copia: Devolucion = { ...devolucion, estado: nuevoEstado };
-    this.devolucionService.actualizarDevolucion(devolucion.id, copia).subscribe({
+    this.devolucionService.actualizarDevolucion(devolucion.id!, copia).subscribe({
       next: (actualizado) => {
         Object.assign(devolucion, actualizado);
         this.mensaje = `Devolución #${devolucion.id} actualizada a ${nuevoEstado}.`;

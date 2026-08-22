@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ServicioService } from '../../services/servicio.service';
+import { DescuentoService } from '../../services/descuento.service';
 import { Servicio } from '../../models/servicio';
 
 @Component({
@@ -15,9 +16,13 @@ export class Home implements OnInit {
   servicios: Servicio[] = [];
   cargando = true;
 
-  constructor(private servicioService: ServicioService) {}
+  constructor(
+    private servicioService: ServicioService,
+    private descuentoService: DescuentoService
+  ) {}
 
   ngOnInit(): void {
+    this.descuentoService.cargarPromociones();
     this.servicioService.obtenerServicios().subscribe({
       next: (data) => {
         this.servicios = data;
@@ -28,5 +33,13 @@ export class Home implements OnInit {
         this.cargando = false;
       },
     });
+  }
+
+  porcentajeDescuento(s: Servicio): number {
+    return this.descuentoService.porcentajeServicio(s.id);
+  }
+
+  precioFinal(s: Servicio): number {
+    return this.descuentoService.precioFinalServicio(s);
   }
 }

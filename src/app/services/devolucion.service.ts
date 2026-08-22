@@ -15,6 +15,18 @@ export class DevolucionService {
     return this.http.get<Devolucion[]>(this.apiUrl).pipe(timeout(10000));
   }
 
+  listarPorUsuario(usuarioId: number): Observable<Devolucion[]> {
+    return this.http
+      .get<Devolucion[]>(`${this.apiUrl}/usuario/${usuarioId}`)
+      .pipe(timeout(10000));
+  }
+
+  registrarSolicitud(devolucion: Devolucion): Observable<Devolucion> {
+    return this.http
+      .post<Devolucion>(`${this.apiUrl}/registrar`, devolucion)
+      .pipe(timeout(10000));
+  }
+
   actualizarDevolucion(id: number, devolucion: Devolucion): Observable<Devolucion> {
     return this.http.put<Devolucion>(`${this.apiUrl}/${id}`, devolucion).pipe(timeout(10000));
   }

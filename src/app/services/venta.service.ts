@@ -15,6 +15,12 @@ export class VentaService {
     return this.http.get<Venta[]>(this.apiUrl).pipe(timeout(10000));
   }
 
+  listarPorComprador(compradorId: number): Observable<Venta[]> {
+    return this.http
+      .get<Venta[]>(`${this.apiUrl}/comprador/${compradorId}`)
+      .pipe(timeout(10000));
+  }
+
   registrarVenta(venta: Venta): Observable<Venta> {
     return this.http.post<Venta>(`${this.apiUrl}/registrar`, venta).pipe(timeout(10000));
   }

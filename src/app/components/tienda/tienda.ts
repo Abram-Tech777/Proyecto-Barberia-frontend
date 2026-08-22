@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
 import { CartService } from '../../services/cart.service';
+import { AuthService } from '../../services/auth.service';
+import { DescuentoService } from '../../services/descuento.service';
 import { Producto } from '../../models/producto';
+
 
 @Component({
   selector: 'app-tienda',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './tienda.html',
   styleUrl: './tienda.css',
 })
@@ -21,11 +25,23 @@ export class Tienda implements OnInit {
 
   constructor(
     private productoService: ProductoService,
-    private cartService: CartService
+    private cartService: CartService,
+    private authService: AuthService,
+    private descuentoService: DescuentoService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.descuentoService.cargarPromociones();
     this.cargarProductos();
+  }
+
+  porcentajeDescuento(p: Producto): number {
+    return this.descuentoService.porcentajeProducto(p.id);
+  }
+
+  precioFinal(p: Producto): number {
+    return this.descuentoService.precioFinalProducto(p);
   }
 
   cargarProductos(): void {
@@ -54,6 +70,10 @@ export class Tienda implements OnInit {
 
   agregarAlCarrito(p: Producto): void {
     if (p.stock <= 0) return;
+    if (!this.authService.getSesion()) {
+      this.router.navigate(['/login']);
+      return;
+    }
     this.cartService.agregar(p, 1);
     this.mensaje = `${p.nombre} agregado al carrito.`;
     setTimeout(() => (this.mensaje = ''), 2500);
@@ -61,6 +81,18 @@ export class Tienda implements OnInit {
 
   sinStock(p: Producto): boolean {
     return p.stock <= 0;
+  }
+
+  sinImagenLocal: { [id: number]: boolean } = {};
+
+  imagenProducto(p: Producto): string {
+    if (p.imagenUrl) return this.productoService.urlImagen(p.imagenUrl);
+    if (!this.sinImagenLocal[p.id]) return `img/productos/${p.id}.jpg`;
+    return '';
+  }
+
+  marcarSinImagen(p: Producto): void {
+    this.sinImagenLocal[p.id] = true;
   }
 
   urlImagen(ruta?: string): string {

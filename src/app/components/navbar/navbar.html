@@ -1,10 +1,8 @@
 <nav class="bg-paper sticky top-0 z-50 w-full border-b border-line-light">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
     <a routerLink="/" class="flex items-center gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6 text-gold-dark">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M12 6c0-1.7 1-3 2-3 1 0 2 1.3 2 3M12 6c0-1.7-1-3-2-3-1 0-2 1.3-2 3M12 12c0-1.7 1-3 2-3 1 0 2 1.3 2 3M12 12c0-1.7-1-3-2-3-1 0-2 1.3-2 3M12 18c0-1.7 1-3 2-3 1 0 2 1.3 2 3M12 18c0-1.7-1-3-2-3-1 0-2 1.3-2 3" />
-      </svg>
-      <span class="font-display text-2xl text-ink tracking-tight">IRON<span class="text-gold-dark">&amp;</span>OAK</span>
+      <img src="logo.png" alt="Corte Real" class="h-10 w-10 object-contain">
+      <span class="font-display text-2xl text-ink tracking-tight">CORTE <span class="text-gold-dark">REAL</span></span>
     </a>
 
     <div class="hidden md:flex items-center gap-6">
@@ -16,9 +14,76 @@
          class="text-label-caps text-muted hover:text-ink transition-colors">Tienda</a>
       <a *ngIf="esCliente()" routerLink="/reservas" routerLinkActive="text-gold-dark border-b-2 border-gold-dark pb-1"
          class="text-label-caps text-muted hover:text-ink transition-colors">Reservas</a>
+      <a *ngIf="esClienteLogeado()" routerLink="/mis-reservas" routerLinkActive="text-gold-dark border-b-2 border-gold-dark pb-1"
+         class="text-label-caps text-muted hover:text-ink transition-colors">Mis Reservas</a>
+      <a *ngIf="esClienteLogeado()" routerLink="/mis-compras" routerLinkActive="text-gold-dark border-b-2 border-gold-dark pb-1"
+         class="text-label-caps text-muted hover:text-ink transition-colors">Mis Compras</a>
+      <a *ngIf="esClienteLogeado()" routerLink="/mi-tarjeta" routerLinkActive="text-gold-dark border-b-2 border-gold-dark pb-1"
+         class="text-label-caps text-muted hover:text-ink transition-colors">Mi Tarjeta</a>
     </div>
 
     <div class="flex items-center gap-3">
+
+      <div class="relative" *ngIf="esClienteLogeado()">
+        <button type="button" (click)="toggleCampana()" title="Notificaciones"
+                class="relative text-muted hover:text-gold-dark transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+          </svg>
+          <span *ngIf="contadorNotificaciones > 0"
+                class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+            {{ contadorNotificaciones }}
+          </span>
+        </button>
+
+        <div *ngIf="campanaAbierta" class="fixed inset-0 z-40" (click)="cerrarCampana()"></div>
+        <div *ngIf="campanaAbierta"
+             class="absolute right-0 top-full mt-2 w-80 bg-paper-low border border-line-light shadow-xl z-50">
+          <div class="px-4 py-3 border-b border-line-light flex items-center justify-between">
+            <span class="text-label-caps text-ink">Notificaciones</span>
+            <span *ngIf="contadorNotificaciones > 0" class="bg-gold text-charcoal text-[10px] font-bold rounded-full min-w-[18px] h-[18px] inline-flex items-center justify-center px-1">
+              {{ contadorNotificaciones }}
+            </span>
+          </div>
+          <div class="max-h-72 overflow-y-auto">
+            <div *ngIf="notificacionesPedidos.length > 0" class="bg-gold/5">
+              <button type="button" (click)="irAMisCompras()"
+                      *ngFor="let n of notificacionesPedidos"
+                      class="w-full text-left px-4 py-3 border-b border-line-light hover:bg-white transition-colors">
+                <p class="text-sm text-ink font-semibold">Pedido #{{ n.ventaId }}</p>
+                <p class="text-xs mt-0.5" [ngClass]="n.estado === 'EN_CAMINO' ? 'text-blue-700' : 'text-green-700'">
+                  {{ n.estado === 'EN_CAMINO' ? 'Tu pedido está en camino — el motorizado va llegando.' : 'Tu pedido fue entregado. ¡Gracias por tu compra!' }}
+                </p>
+              </button>
+            </div>
+
+            <button type="button" (click)="irAMisReservas()"
+                    *ngFor="let n of notificaciones"
+                    class="w-full text-left px-4 py-3 border-b border-line-light hover:bg-white transition-colors">
+              <p class="text-sm text-ink font-semibold truncate">{{ n.servicio?.nombre ?? 'Cita de barbería' }}</p>
+              <p class="text-xs text-muted mt-0.5">
+                con {{ n.barbero?.nombreCompleto }} · {{ formatearFechaCorta(n.horaInicio) }}
+              </p>
+              <p class="text-xs text-green-700 mt-0.5">✓ Confirmada — cita #{{ n.id }}</p>
+            </button>
+
+            <p *ngIf="contadorNotificaciones === 0" class="px-4 py-6 text-center text-sm text-muted">
+              No tienes notificaciones por ahora.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 border-t border-line-light">
+            <button type="button" (click)="irAMisReservas(); marcarPedidosVistos()"
+                    class="py-2.5 text-label-caps text-gold-dark hover:bg-white transition-colors border-r border-line-light">
+              Mis reservas
+            </button>
+            <button type="button" (click)="irAMisCompras(); marcarPedidosVistos()"
+                    class="py-2.5 text-label-caps text-gold-dark hover:bg-white transition-colors">
+              Mis compras
+            </button>
+          </div>
+        </div>
+      </div>
+
       <a *ngIf="esCliente()" routerLink="/carrito" class="relative text-muted hover:text-gold-dark transition-colors" title="Carrito">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-6 h-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 4.6a1 1 0 00.9 1.4H19M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z" />
@@ -28,8 +93,12 @@
         </span>
       </a>
 
+      <a *ngIf="usuario?.rol === 'BARBERO' || puedeVerPanelBarbero" routerLink="/mi-panel"
+         routerLinkActive="text-gold-dark"
+         class="border border-gold-dark text-gold-dark hover:bg-gold hover:text-charcoal text-label-caps px-4 py-2 transition-colors">Mi Panel</a>
+
       <a *ngIf="usuario?.rol === 'ADMIN'" routerLink="/admin" routerLinkActive="text-gold-dark"
-         class="bg-charcoal hover:bg-walnut text-gold-light text-label-caps px-4 py-2 transition-colors">Admin</a>
+         class="bg-charcoal hover:bg-walnut text-gold-light text-label-caps px-4 py-2 transition-colors">Panel de Administrador</a>
 
       <ng-container *ngIf="!usuario">
         <a routerLink="/login" class="hidden sm:inline text-label-caps text-muted hover:text-ink transition-colors">Ingresar</a>

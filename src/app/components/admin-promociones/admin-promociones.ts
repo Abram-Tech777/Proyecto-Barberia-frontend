@@ -18,6 +18,7 @@ export class AdminPromociones implements OnInit {
   mensaje = '';
   editando = false;
   editandoId: number | null = null;
+  notificandoId: number | null = null;
 
   nombre = '';
   porcentajeDescuento = 0;
@@ -119,6 +120,25 @@ export class AdminPromociones implements OnInit {
       error: (err) => {
         console.error('Error al eliminar promoción:', err);
         this.error = 'No se pudo eliminar la promoción.';
+      },
+    });
+  }
+
+  notificarPorCorreo(p: Promocion): void {
+    if (!confirm(`¿Enviar la promoción "${p.nombre}" por correo a los clientes suscritos?`)) return;
+    this.error = '';
+    this.mensaje = '';
+    this.notificandoId = p.id!;
+    this.promocionService.notificarPorCorreo(p.id!).subscribe({
+      next: ({ enviados }) => {
+        this.notificandoId = null;
+        this.mensaje = enviados > 0
+          ? `Promoción "${p.nombre}" enviada a ${enviados} cliente(s).`
+          : 'No hay clientes suscritos con recibirPromociones activo.';
+      },
+      error: () => {
+        this.notificandoId = null;
+        this.error = 'No se pudieron enviar los correos. Verifica la configuración SMTP.';
       },
     });
   }

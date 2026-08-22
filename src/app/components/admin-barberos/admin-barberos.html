@@ -20,7 +20,7 @@
 
     <div class="mb-8 bg-paper-low border border-line-light p-6">
       <h3 class="font-semibold text-ink mb-4">{{ editando ? 'Editar barbero' : 'Nuevo barbero' }}</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
           <label class="block text-sm text-muted mb-1">Nombre completo *</label>
           <input [(ngModel)]="nombreCompleto" placeholder="Ej. Marco Ramos"
@@ -31,18 +31,29 @@
           <input [(ngModel)]="porcentajeComision" type="number" step="0.01" min="0"
                  class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
         </div>
-        <div class="flex items-end gap-3">
-          <label class="flex items-center gap-2 text-sm text-muted pb-2">
-            <input [(ngModel)]="activo" type="checkbox" class="accent-gold-dark">
-            Activo
-          </label>
-          <button (click)="guardar()"
-                  class="btn-gold px-5 py-2 text-center inline-block">
-            {{ editando ? 'Guardar' : 'Registrar' }}
-          </button>
+        <div>
+          <label class="block text-sm text-muted mb-1">Cuenta vinculada (login)</label>
+          <select [(ngModel)]="usuarioVinculadoId"
+                  class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+            <option [ngValue]="null">— Sin cuenta —</option>
+            <option *ngFor="let c of cuentas" [ngValue]="c.id">{{ c.email }} ({{ c.rol }})</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-4 pt-4 border-t border-line-light flex items-center justify-between gap-4 flex-wrap">
+        <label class="flex items-center gap-2 text-sm text-muted cursor-pointer">
+          <input [(ngModel)]="activo" type="checkbox" class="accent-gold-dark w-4 h-4">
+          Barbero activo
+        </label>
+        <div class="flex items-center gap-3">
           <button *ngIf="editando" (click)="nueva()"
-                  class="border border-line text-muted px-5 py-2 hover:border-gold-dark hover:text-gold-dark transition-colors">
+                  class="border border-line text-muted px-5 py-2 hover:border-gold-dark hover:text-gold-dark transition-colors whitespace-nowrap">
             Cancelar
+          </button>
+          <button (click)="guardar()"
+                  class="btn-gold px-6 py-2 whitespace-nowrap">
+            {{ editando ? 'Guardar' : 'Registrar' }}
           </button>
         </div>
       </div>
@@ -56,6 +67,7 @@
           <tr class="bg-line-light/40 text-muted text-left">
             <th class="px-4 py-3">Nombre</th>
             <th class="px-4 py-3">% Comisión</th>
+            <th class="px-4 py-3">Cuenta</th>
             <th class="px-4 py-3">Estado</th>
             <th class="px-4 py-3 text-right">Acciones</th>
           </tr>
@@ -65,15 +77,23 @@
             <td class="px-4 py-3 font-medium">{{ b.nombreCompleto }}</td>
             <td class="px-4 py-3">{{ b.porcentajeComision ?? '—' }}%</td>
             <td class="px-4 py-3">
+              <ng-container *ngIf="b.usuario">{{ b.usuarioEmail }} <span class="text-muted">· {{ b.usuarioRol }}</span></ng-container>
+              <span *ngIf="!b.usuario" class="text-muted">— sin cuenta —</span>
+            </td>
+            <td class="px-4 py-3">
               <span [ngClass]="b.activo ? 'text-green-700' : 'text-red-600'">{{ b.activo ? 'Activo' : 'Inactivo' }}</span>
             </td>
             <td class="px-4 py-3 text-right whitespace-nowrap">
               <button (click)="editar(b)" class="text-gold-dark hover:underline mr-3">Editar</button>
+              <button (click)="toggleActivo(b)" class="hover:underline mr-3"
+                      [ngClass]="b.activo ? 'text-red-600' : 'text-green-700'">
+                {{ b.activo ? 'Desactivar' : 'Activar' }}
+              </button>
               <button (click)="eliminar(b)" class="text-red-600 hover:underline">Eliminar</button>
             </td>
           </tr>
           <tr *ngIf="barberos.length === 0">
-            <td colspan="4" class="px-4 py-10 text-center text-muted">No hay barberos registrados.</td>
+            <td colspan="5" class="px-4 py-10 text-center text-muted">No hay barberos registrados.</td>
           </tr>
         </tbody>
       </table>

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, timeout } from 'rxjs';
+import { Observable, catchError, of, timeout } from 'rxjs';
 import { Barbero } from '../models/barbero';
+import { EstadisticasBarbero } from '../models/estadisticas-barbero';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,16 @@ export class BarberoService {
 
   listarBarberos(): Observable<Barbero[]> {
     return this.http.get<Barbero[]>(this.apiUrl).pipe(timeout(10000));
+  }
+
+  obtenerPerfilPorUsuario(usuarioId: number): Observable<Barbero | null> {
+    return this.http
+      .get<Barbero>(`${this.apiUrl}/por-usuario/${usuarioId}`)
+      .pipe(timeout(10000), catchError(() => of(null)));
+  }
+
+  obtenerEstadisticas(barberoId: number): Observable<EstadisticasBarbero> {
+    return this.http.get<EstadisticasBarbero>(`${this.apiUrl}/${barberoId}/estadisticas`).pipe(timeout(10000));
   }
 
   crearBarbero(barbero: Barbero): Observable<Barbero> {

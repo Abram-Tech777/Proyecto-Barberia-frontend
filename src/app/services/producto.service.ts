@@ -15,6 +15,10 @@ export class ProductoService {
     return this.http.get<Producto[]>(this.apiUrl).pipe(timeout(10000));
   }
 
+  obtenerPorId(id: number): Observable<Producto> {
+    return this.http.get<Producto>(`${this.apiUrl}/${id}`).pipe(timeout(10000));
+  }
+
   listarPorCategoria(categoria: string): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${this.apiUrl}/categoria/${categoria}`).pipe(timeout(10000));
   }

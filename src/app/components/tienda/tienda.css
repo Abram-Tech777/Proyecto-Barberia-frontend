@@ -1,1 +1,10 @@
 .app-tienda { display: block; }
+
+.tarjeta-producto {
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+
+.tarjeta-producto:hover {
+  border-color: #ff8c1a;
+  box-shadow: 0 0 0 1px #ff8c1a, 0 0 20px rgba(255, 140, 26, .45);
+}

@@ -8,10 +8,27 @@
         </svg>
       </div>
       <h2 class="font-display text-3xl text-ink uppercase mb-3">¡Compra registrada!</h2>
-      <p class="text-muted mb-2">Tu pedido quedó en estado <strong>PENDIENTE_PAGO</strong>.</p>
-      <p class="text-ink mb-8">Total a pagar: <span class="font-bold text-gold-dark">{{ ultimoTotal | currency: 'PEN' }}</span></p>
+      <p *ngIf="ultimoEstado === 'PAGADO'" class="text-muted mb-2">
+        ¡Tu pago fue registrado! Tu pedido quedó en estado <strong class="text-green-700">PAGADO</strong>.
+      </p>
+      <p *ngIf="ultimoEstado !== 'PAGADO'" class="text-muted mb-2">
+        Tu pedido quedó en estado <strong>PENDIENTE_PAGO</strong>.
+      </p>
+      <p class="text-ink mb-8">
+        {{ ultimoEstado === 'PAGADO' ? 'Total pagado:' : 'Total a pagar:' }}
+        <span class="font-bold text-gold-dark">{{ ultimoTotal | currency: 'PEN' }}</span>
+      </p>
       <div class="mb-8 p-4 bg-paper-low border border-line-light text-sm text-muted">
-        Recoge tu pedido en tienda. Puedes coordinar el pago por WhatsApp con nuestro equipo.
+        <ng-container *ngIf="tipoDespacho === 'RECOJO_TIENDA'; else domicilioMsg">
+          {{ ultimoEstado === 'PAGADO'
+            ? 'Pedido pagado. Recoge tu pedido en tienda presentando esta confirmación.'
+            : 'Recoge tu pedido en tienda. Puedes coordinar el pago por WhatsApp con nuestro equipo.' }}
+        </ng-container>
+        <ng-template #domicilioMsg>
+          {{ ultimoEstado === 'PAGADO'
+            ? 'Pedido pagado. Un motorizado llevará tu pedido a la dirección indicada.'
+            : 'Un motorizado llevará tu pedido a la dirección indicada. Puedes coordinar el pago por WhatsApp con nuestro equipo.' }}
+        </ng-template>
       </div>
       <button (click)="seguirComprando()" class="btn-gold px-8 py-3 text-center inline-block">
         Seguir comprando
@@ -39,8 +56,9 @@
         <div class="lg:col-span-2 bg-paper-low border border-line-light overflow-hidden">
           <div *ngFor="let item of items" class="flex items-center gap-4 p-4 border-b border-line-light/60">
             <div class="w-16 h-16 bg-neutral-200 shrink-0 overflow-hidden relative">
-              <img *ngIf="item.producto.imagenUrl" [src]="urlImagen(item.producto.imagenUrl)" class="w-full h-full object-cover">
-              <div *ngIf="!item.producto.imagenUrl" class="w-full h-full flex items-center justify-center">
+              <img *ngIf="imagenItem(item)" [src]="imagenItem(item)" [alt]="item.producto.nombre"
+                   (error)="marcarSinImagen(item)" class="w-full h-full object-cover">
+              <div *ngIf="!imagenItem(item)" class="w-full h-full flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-neutral-400">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                 </svg>
@@ -48,7 +66,11 @@
             </div>
             <div class="flex-1">
               <h3 class="text-ink font-semibold">{{ item.producto.nombre }}</h3>
-              <p class="text-muted text-sm">{{ item.producto.precio | currency: 'PEN' }} c/u</p>
+              <p class="text-muted text-sm">
+                <span *ngIf="porcentajeItem(item) > 0" class="line-through mr-2">{{ item.producto.precio | currency: 'PEN' }}</span>
+                {{ precioUnitarioItem(item) | currency: 'PEN' }} c/u
+                <span *ngIf="porcentajeItem(item) > 0" class="text-red-600 font-semibold ml-1">-{{ porcentajeItem(item) }}%</span>
+              </p>
             </div>
             <div class="flex items-center gap-2">
               <button (click)="cambiarCantidad(item.producto.id, item.cantidad - 1)"
@@ -57,7 +79,7 @@
               <button (click)="cambiarCantidad(item.producto.id, item.cantidad + 1)"
                       class="w-8 h-8 border border-line-light text-ink hover:border-gold-dark transition-colors">+</button>
             </div>
-            <span class="w-24 text-right font-semibold text-ink">{{ item.producto.precio * item.cantidad | currency: 'PEN' }}</span>
+            <span class="w-24 text-right font-semibold text-ink">{{ subtotalLinea(item) | currency: 'PEN' }}</span>
             <button (click)="quitar(item.producto.id)" class="text-red-600 hover:underline text-sm">Quitar</button>
           </div>
         </div>
@@ -65,10 +87,85 @@
         <div class="bg-charcoal text-white p-6 h-fit">
           <h3 class="text-label-caps text-gold-light uppercase mb-4">Resumen</h3>
           <div class="flex justify-between mb-2 text-sm text-neutral-300">
-            <span>Productos</span><span>{{ items.length }}</span>
+            <span>Productos</span><span>{{ subtotal | currency: 'PEN' }}</span>
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-xs uppercase tracking-wider text-neutral-400 mb-2">Tipo de despacho</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" (click)="cambiarDespacho('RECOJO_TIENDA')"
+                      [ngClass]="tipoDespacho === 'RECOJO_TIENDA'
+                        ? 'bg-gold text-charcoal border-gold'
+                        : 'bg-charcoal border border-line text-neutral-300 hover:border-gold'"
+                      class="px-2 py-2.5 text-[11px] uppercase tracking-wider transition-colors leading-tight">
+                Recojo<br>en tienda
+              </button>
+              <button type="button" (click)="cambiarDespacho('ENVIO_DOMICILIO')"
+                      [ngClass]="tipoDespacho === 'ENVIO_DOMICILIO'
+                        ? 'bg-gold text-charcoal border-gold'
+                        : 'bg-charcoal border border-line text-neutral-300 hover:border-gold'"
+                      class="px-2 py-2.5 text-[11px] uppercase tracking-wider transition-colors leading-tight">
+                Motorizado<br>S/ {{ costoEnvioDomicilio }}.00
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="tipoDespacho === 'ENVIO_DOMICILIO'" class="mb-4 border border-line p-3 max-h-64 overflow-y-auto">
+            <label class="block text-xs uppercase tracking-wider text-neutral-400 mb-2">Entregar en</label>
+            <p *ngIf="direcciones.length === 0" class="text-sm text-neutral-400 mb-2">
+              Aún no tienes direcciones guardadas.
+            </p>
+            <label *ngFor="let d of direcciones" class="flex gap-2 items-start py-1.5 cursor-pointer group">
+              <input type="radio" name="dirEntrega" [value]="d.id" [(ngModel)]="direccionId"
+                     class="mt-0.5 accent-yellow-600">
+              <span class="text-sm">
+                <span class="text-white font-medium">{{ d.nombreDireccion }}</span>
+                <span class="block text-neutral-400 text-xs leading-snug">{{ d.direccion }}, {{ d.distrito }}</span>
+              </span>
+            </label>
+
+            <div *ngIf="!mostrarFormDireccion" class="mt-2">
+              <button type="button" (click)="abrirFormDireccion()"
+                      class="text-xs uppercase tracking-wider text-gold-light hover:text-gold border border-line px-3 py-1.5 hover:border-gold transition-colors">
+                + Agregar dirección
+              </button>
+            </div>
+
+            <div *ngIf="mostrarFormDireccion" class="mt-3 space-y-2 bg-black/20 p-3 border border-line/60">
+              <input [(ngModel)]="nuevaDir.nombreDireccion" placeholder="Nombre (ej: Casa, Oficina)"
+                     class="w-full bg-charcoal border border-line px-2.5 py-2 text-sm text-white focus:outline-none focus:border-gold">
+              <input [(ngModel)]="nuevaDir.direccion" placeholder="Dirección (av, jr, calle y número)"
+                     class="w-full bg-charcoal border border-line px-2.5 py-2 text-sm text-white focus:outline-none focus:border-gold">
+              <div class="grid grid-cols-2 gap-2">
+                <input [(ngModel)]="nuevaDir.distrito" placeholder="Distrito"
+                       class="w-full bg-charcoal border border-line px-2.5 py-2 text-sm text-white focus:outline-none focus:border-gold">
+                <input [(ngModel)]="nuevaDir.provincia" placeholder="Provincia"
+                       class="w-full bg-charcoal border border-line px-2.5 py-2 text-sm text-white focus:outline-none focus:border-gold">
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <input [(ngModel)]="nuevaDir.departamento" placeholder="Departamento"
+                       class="w-full bg-charcoal border border-line px-2.5 py-2 text-sm text-white focus:outline-none focus:border-gold">
+                <input [(ngModel)]="nuevaDir.telefonoContacto" placeholder="Teléfono contacto"
+                       class="w-full bg-charcoal border border-line px-2.5 py-2 text-sm text-white focus:outline-none focus:border-gold">
+              </div>
+              <div class="flex gap-2 pt-1">
+                <button type="button" (click)="guardarDireccion()" [disabled]="guardandoDireccion"
+                        class="btn-gold flex-1 py-2 text-xs uppercase tracking-wider disabled:opacity-50">
+                  {{ guardandoDireccion ? 'Guardando...' : 'Guardar' }}
+                </button>
+                <button type="button" (click)="cerrarFormDireccion()"
+                        class="border border-line text-neutral-300 px-3 py-2 text-xs uppercase tracking-wider hover:border-gold">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-between mb-1.5 text-sm text-neutral-300">
+            <span>IGV (18%)</span><span>{{ igv | currency: 'PEN' }}</span>
           </div>
           <div class="flex justify-between mb-4 text-sm text-neutral-300">
-            <span>Despacho</span><span>Recojo en tienda</span>
+            <span>Envío</span><span>{{ costoEnvio > 0 ? (costoEnvio | currency: 'PEN') : 'Gratis (recojo)' }}</span>
           </div>
           <div class="border-t border-line pt-3 flex justify-between mb-6">
             <span class="font-semibold">Total</span>
@@ -164,7 +261,9 @@
           <h3 class="text-lg font-semibold text-ink mb-2">Pago en efectivo</h3>
           <p class="text-sm text-muted leading-relaxed">
             Puedes pagar el monto de <strong class="text-ink">{{ total | currency: 'PEN' }}</strong> en efectivo
-            cuando recojas tu pedido en tienda. Prepara el monto exacto si es posible.
+            <ng-container *ngIf="tipoDespacho === 'RECOJO_TIENDA'; else domicilioEfectivo">cuando recojas tu pedido en tienda</ng-container>
+            <ng-template #domicilioEfectivo>al recibir tu pedido del motorizado</ng-template>.
+            Prepara el monto exacto si es posible.
           </p>
         </div>
       </div>

@@ -70,9 +70,6 @@
                 <input type="file" accept="image/*" (change)="alSeleccionarImagen($event)" class="hidden" [disabled]="imagenSubiendo">
               </label>
               <p class="text-xs text-muted mt-2">La imagen se guarda en el servidor y no se borra al editar el producto.</p>
-              <label class="block text-sm text-muted mt-3 mb-1">O pega una URL externa</label>
-              <input [(ngModel)]="imagenUrl" placeholder="https://..."
-                     class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
             </div>
           </div>
         </div>

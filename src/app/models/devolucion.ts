@@ -1,8 +1,13 @@
 export interface Devolucion {
-  id: number;
-  cita: { id: number };
-  montoReembolso: number;
-  celularCliente: string;
+  id?: number;
+  detalleVenta: {
+    id: number;
+    cantidad?: number;
+    precioUnitario?: number;
+    producto?: { id: number; nombre?: string };
+  };
+  motivo: string;
+  montoReembolso?: number;
   estado: string;
   fechaRegistro?: string;
 }

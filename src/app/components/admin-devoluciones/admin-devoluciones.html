@@ -25,8 +25,9 @@
         <thead>
           <tr class="bg-line-light/40 text-muted text-left">
             <th class="px-4 py-3">#</th>
-            <th class="px-4 py-3">Cita</th>
-            <th class="px-4 py-3">Celular</th>
+            <th class="px-4 py-3">Producto</th>
+            <th class="px-4 py-3">Cant.</th>
+            <th class="px-4 py-3">Motivo</th>
             <th class="px-4 py-3">Reembolso</th>
             <th class="px-4 py-3">Registro</th>
             <th class="px-4 py-3">Estado</th>
@@ -36,8 +37,9 @@
         <tbody>
           <tr *ngFor="let d of devoluciones" class="border-t border-line-light text-ink">
             <td class="px-4 py-3 font-medium">{{ d.id }}</td>
-            <td class="px-4 py-3">{{ d.cita.id }}</td>
-            <td class="px-4 py-3">{{ d.celularCliente }}</td>
+            <td class="px-4 py-3">{{ d.detalleVenta.producto?.nombre ?? ('Detalle #' + d.detalleVenta.id) }}</td>
+            <td class="px-4 py-3">{{ d.detalleVenta.cantidad }}</td>
+            <td class="px-4 py-3 max-w-xs truncate" [title]="d.motivo">{{ d.motivo }}</td>
             <td class="px-4 py-3">{{ d.montoReembolso | currency: 'PEN' }}</td>
             <td class="px-4 py-3">{{ formatearFecha(d.fechaRegistro) }}</td>
             <td class="px-4 py-3">
@@ -55,7 +57,7 @@
             </td>
           </tr>
           <tr *ngIf="devoluciones.length === 0">
-            <td colspan="7" class="px-4 py-10 text-center text-muted">No hay devoluciones registradas.</td>
+            <td colspan="8" class="px-4 py-10 text-center text-muted">No hay devoluciones registradas.</td>
           </tr>
         </tbody>
       </table>

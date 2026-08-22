@@ -29,11 +29,9 @@
       </button>
     </form>
 
-    <div class="mt-5 pt-5 border-t border-neutral-800 text-center">
-      <button type="button" disabled title="Próximamente"
-              class="w-full bg-neutral-800 border border-neutral-700 text-neutral-300 py-2.5 rounded-lg opacity-60 cursor-not-allowed">
-        Continuar con Google (Próximamente)
-      </button>
+    <div class="mt-5 pt-5 border-t border-neutral-800">
+      <div id="googleBtn" class="flex justify-center min-h-[40px]"></div>
+      <p *ngIf="googleError" class="mt-2 text-xs text-neutral-500 text-center">{{ googleError }}</p>
     </div>
 
     <p class="mt-5 text-sm text-neutral-400 text-center">

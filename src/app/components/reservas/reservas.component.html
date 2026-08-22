@@ -1,60 +1,255 @@
-<div class="bg-neutral-950 min-h-[60vh]">
-  <div class="max-w-2xl mx-auto px-4 sm:px-6 py-16">
-    <h2 class="text-3xl sm:text-4xl font-bold text-neutral-100">Reserva tu cita</h2>
-    <p class="text-neutral-400 mt-2">Completa el formulario y nos encargamos del resto.</p>
+<div class="bg-paper min-h-[70vh]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
 
-    <div *ngIf="mensajeExito"
-         class="mt-6 bg-emerald-950 border border-emerald-700 text-emerald-300 rounded p-4">
-      {{ mensajeExito }}
+    <div class="mb-10 text-center" *ngIf="!citaRegistrada">
+      <span class="text-label-caps text-gold-dark mb-2 inline-block">Corte Real</span>
+      <h2 class="font-display text-3xl sm:text-4xl text-ink uppercase">Reserva tu cita</h2>
+      <p class="text-muted mt-2">Tres pasos y listo. Elige barbero, servicio y horario.</p>
     </div>
 
-    <div *ngIf="error" class="mt-6 bg-red-950 border border-red-700 text-red-300 rounded p-4">
-      {{ error }}
+    <div *ngIf="errorCarga" class="mb-6 border border-red-300 bg-red-50 text-red-700 px-4 py-3 text-sm">
+      {{ errorCarga }}
     </div>
 
-    <div *ngIf="errorBarberos" class="mt-6 bg-red-950 border border-red-700 text-red-300 rounded p-4">
-      {{ errorBarberos }}
+    <div *ngIf="cargando" class="text-muted">Cargando opciones…</div>
+
+    <ng-container *ngIf="!cargando && !citaRegistrada">
+
+      <div class="flex items-center justify-center gap-0 mb-10 select-none">
+        <button type="button" (click)="irAPaso(1)" class="flex items-center gap-2 group">
+          <span class="w-9 h-9 rounded-full flex items-center justify-center font-display transition-colors"
+                [class.bg-gold]="paso >= 1"
+                [class.text-charcoal]="paso >= 1"
+                [class.border]="paso < 1"
+                [class.border-line]="paso < 1">1</span>
+          <span class="text-label-caps hidden sm:inline"
+                [class.text-ink]="paso >= 1" [class.text-muted]="paso < 1">Barbero</span>
+        </button>
+        <span class="w-10 sm:w-20 h-px mx-2" [class.bg-gold-dark]="paso >= 2" [class.bg-line]="paso < 2"></span>
+        <button type="button" (click)="irAPaso(2)" class="flex items-center gap-2">
+          <span class="w-9 h-9 rounded-full flex items-center justify-center font-display transition-colors"
+                [class.bg-gold]="paso >= 2" [class.text-charcoal]="paso >= 2"
+                [class.border]="paso < 2" [class.border-line]="paso < 2">2</span>
+          <span class="text-label-caps hidden sm:inline"
+                [class.text-ink]="paso >= 2" [class.text-muted]="paso < 2">Servicio</span>
+        </button>
+        <span class="w-10 sm:w-20 h-px mx-2" [class.bg-gold-dark]="paso >= 3" [class.bg-line]="paso < 3"></span>
+        <button type="button" (click)="irAPaso(3)" class="flex items-center gap-2">
+          <span class="w-9 h-9 rounded-full flex items-center justify-center font-display transition-colors"
+                [class.bg-gold]="paso >= 3" [class.text-charcoal]="paso >= 3"
+                [class.border]="paso < 3" [class.border-line]="paso < 3">3</span>
+          <span class="text-label-caps hidden sm:inline"
+                [class.text-ink]="paso >= 3" [class.text-muted]="paso < 3">Horario</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+        <div class="lg:col-span-2 bg-paper-low border border-line-light p-6 sm:p-8">
+
+          <div *ngIf="error" class="mb-6 border border-red-300 bg-red-50 text-red-700 px-4 py-3 text-sm">{{ error }}</div>
+
+          <div *ngIf="paso === 1">
+            <h3 class="font-display text-xl text-ink uppercase mb-1">Elige tu barbero</h3>
+            <p class="text-muted text-sm mb-5">Todos nuestros barberos están certificados.</p>
+            <div class="relative mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+              <input type="text" [(ngModel)]="filtroBarbero" name="filtroBarbero"
+                     placeholder="Buscar barbero por nombre…"
+                     autocomplete="off"
+                     class="w-full bg-white border border-line-light pl-10 pr-4 py-2.5 text-ink focus:outline-none focus:border-gold-dark">
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <button type="button" (click)="seleccionarBarbero(b.id)"
+                      *ngFor="let b of barberosFiltrados"
+                      class="text-left border p-5 transition-all hover:-translate-y-0.5"
+                      [class.border-gold]="barberoId === b.id"
+                      [class.bg-white]="barberoId === b.id"
+                      [class.shadow-lg]="barberoId === b.id"
+                      [class.border-line-light]="barberoId !== b.id">
+                <div class="flex items-center gap-4">
+                  <span class="w-12 h-12 rounded-full bg-charcoal text-gold-light font-display flex items-center justify-center text-lg shrink-0">
+                    {{ b.nombreCompleto.charAt(0) }}
+                  </span>
+                  <div class="min-w-0">
+                    <p class="font-semibold text-ink truncate">{{ b.nombreCompleto }}</p>
+                    <p class="text-xs text-muted mt-0.5">Barbero profesional</p>
+                  </div>
+                  <span *ngIf="barberoId === b.id" class="ml-auto text-gold-dark text-xl">✓</span>
+                </div>
+              </button>
+            </div>
+            <p *ngIf="barberos.length > 0 && barberosFiltrados.length === 0" class="text-muted text-sm">
+              No se encontró ningún barbero con ese nombre.
+            </p>
+            <p *ngIf="barberos.length === 0" class="text-muted text-sm">No hay barberos disponibles por ahora.</p>
+          </div>
+
+          <div *ngIf="paso === 2">
+            <h3 class="font-display text-xl text-ink uppercase mb-1">Elige tu servicio</h3>
+            <p class="text-muted text-sm mb-6">El precio y la duración se calculan automáticamente.</p>
+            <div class="space-y-3">
+              <button type="button" (click)="seleccionarServicio(s.id)"
+                      *ngFor="let s of servicios"
+                      class="w-full text-left border p-5 transition-all hover:-translate-y-0.5 flex items-center gap-4"
+                      [class.border-gold]="servicioId === s.id"
+                      [class.bg-white]="servicioId === s.id"
+                      [class.shadow-lg]="servicioId === s.id"
+                      [class.border-line-light]="servicioId !== s.id">
+                <div class="min-w-0 flex-1">
+                  <p class="font-semibold text-ink">{{ s.nombre }}</p>
+                  <p class="text-xs text-muted mt-0.5 line-clamp-1">{{ s.descripcion }}</p>
+                  <p class="text-xs text-gold-dark mt-1 font-semibold flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {{ s.duracionMinutos }} min
+                  </p>
+                </div>
+                <div class="text-right shrink-0">
+                  <p *ngIf="porcentajeDescuentoServicio(s) > 0" class="text-xs text-muted line-through">S/ {{ s.precioBase | number:'1.2-2' }}</p>
+                  <p class="font-display text-xl" [class.text-gold]="porcentajeDescuentoServicio(s) > 0" [class.text-ink]="porcentajeDescuentoServicio(s) === 0">
+                    S/ {{ precioFinalServicio(s) | number:'1.2-2' }}
+                  </p>
+                  <p *ngIf="porcentajeDescuentoServicio(s) > 0" class="text-[11px] font-bold bg-red-50 border border-red-200 text-red-700 px-1.5 py-0.5 inline-block mt-0.5">-{{ porcentajeDescuentoServicio(s) }}%</p>
+                </div>
+                <span *ngIf="servicioId === s.id" class="text-gold-dark text-xl shrink-0">✓</span>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="paso === 3">
+            <h3 class="font-display text-xl text-ink uppercase mb-1">Fecha, hora y contacto</h3>
+            <p class="text-muted text-sm mb-6">Atendemos de lunes a domingo, 9:00 a 20:00.</p>
+
+            <div class="grid sm:grid-cols-2 gap-5 mb-6">
+              <div>
+                <label class="block text-sm text-muted mb-1">Fecha *</label>
+                <input type="date" [(ngModel)]="fecha" name="fecha" [min]="minFecha"
+                       class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+              </div>
+              <div>
+                <label class="block text-sm text-muted mb-1">Hora *</label>
+                <select [(ngModel)]="hora" name="hora"
+                        class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+                  <option value="" disabled>Selecciona una hora</option>
+                  <option *ngFor="let h of horasDisponibles" [value]="h" [disabled]="esHoraPasada(h)">
+                    {{ h }}{{ esHoraPasada(h) ? ' (pasó)' : '' }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-sm text-muted mb-1">Nombre completo *</label>
+                <input type="text" [(ngModel)]="nombreCliente" name="nombreCliente" placeholder="Tu nombre"
+                       class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+              </div>
+              <div>
+                <label class="block text-sm text-muted mb-1">Celular (WhatsApp) *</label>
+                <input type="tel" [(ngModel)]="celularCliente" name="celularCliente" placeholder="9 dígitos"
+                       class="w-full bg-white border border-line-light px-3 py-2 text-ink focus:outline-none focus:border-gold-dark">
+              </div>
+            </div>
+            <p class="text-xs text-muted mt-3">Con este celular encontrarás tus citas en «Mis Reservas» y podrás pagarlas.</p>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-line-light flex items-center justify-between gap-4 flex-wrap">
+            <button type="button" (click)="irAPaso(paso - 1)" *ngIf="paso > 1"
+                    class="border border-line text-muted px-5 py-2 hover:border-gold-dark hover:text-gold-dark transition-colors whitespace-nowrap">
+              ← Atrás
+            </button>
+            <span *ngIf="paso === 1"></span>
+            <button type="button" (click)="siguiente()" *ngIf="paso < 3"
+                    [disabled]="(paso === 1 && !barberoId) || (paso === 2 && !servicioId)"
+                    class="btn-gold px-8 py-2 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap">
+              Continuar →
+            </button>
+            <button type="button" (click)="reservar()" *ngIf="paso === 3"
+                    [disabled]="enviando"
+                    class="btn-gold px-8 py-2 disabled:opacity-50 whitespace-nowrap">
+              {{ enviando ? 'Reservando…' : 'Confirmar reserva' }}
+            </button>
+          </div>
+        </div>
+
+        <aside class="bg-charcoal p-6 lg:sticky lg:top-24">
+          <span class="text-label-caps text-gold-light block mb-4">Resumen de tu cita</span>
+
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between gap-3 border-b border-white/10 pb-2">
+              <span class="text-white/60">Barbero</span>
+              <span class="text-gold-light font-semibold text-right">{{ barberoSeleccionado?.nombreCompleto ?? '—' }}</span>
+            </div>
+            <div class="flex justify-between gap-3 border-b border-white/10 pb-2">
+              <span class="text-white/60">Servicio</span>
+              <span class="text-gold-light font-semibold text-right">{{ servicioSeleccionado?.nombre ?? '—' }}</span>
+            </div>
+            <div class="flex justify-between gap-3 border-b border-white/10 pb-2">
+              <span class="text-white/60">Duración</span>
+              <span class="text-white">{{ servicioSeleccionado ? servicioSeleccionado.duracionMinutos + ' min' : '—' }}</span>
+            </div>
+            <div class="flex justify-between gap-3 border-b border-white/10 pb-2">
+              <span class="text-white/60">Fecha</span>
+              <span class="text-white text-right capitalize">{{ fechaFormateada || '—' }}</span>
+            </div>
+            <div class="flex justify-between gap-3 border-b border-white/10 pb-2">
+              <span class="text-white/60">Hora</span>
+              <span class="text-white">{{ hora || '—' }}</span>
+            </div>
+            <div class="flex justify-between gap-3 pt-1">
+              <span class="text-label-caps text-white/60">Total a pagar</span>
+              <span class="text-right">
+                <span *ngIf="servicioSeleccionado && porcentajeDescuentoServicio(servicioSeleccionado) > 0" class="block text-xs text-white/40 line-through">
+                  S/ {{ servicioSeleccionado.precioBase | number:'1.2-2' }}
+                </span>
+                <span class="font-display text-2xl text-gold">
+                  {{ servicioSeleccionado ? ('S/ ' + (precioFinalServicio(servicioSeleccionado) | number:'1.2-2')) : 'S/ —' }}
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <p class="text-white/40 text-xs mt-6 leading-relaxed">
+            Tu cita queda como PENDIENTE hasta que el barbero la confirme.
+            Puedes abonar el 50% o pagarla completa desde «Mis Reservas».
+          </p>
+        </aside>
+      </div>
+    </ng-container>
+
+    <div *ngIf="citaRegistrada" class="max-w-xl mx-auto bg-paper-low border border-line-light p-10 text-center">
+      <div class="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-5">
+        <span class="text-green-700 text-3xl">✓</span>
+      </div>
+      <h3 class="font-display text-2xl text-ink uppercase">¡Reserva registrada!</h3>
+      <p class="text-muted mt-2">
+        Código de cita <span class="font-bold text-ink">#{{ citaRegistrada.id }}</span> ·
+        Estado: <span class="text-gold-dark font-semibold">{{ citaRegistrada.estado }}</span>
+      </p>
+      <div class="mt-6 bg-white border border-line-light p-4 text-sm text-left space-y-1">
+        <p><span class="text-muted">Barbero:</span> <strong>{{ citaRegistrada.barbero?.nombreCompleto }}</strong></p>
+        <p *ngIf="citaRegistrada.servicio"><span class="text-muted">Servicio:</span> <strong>{{ citaRegistrada.servicio.nombre }}</strong></p>
+        <p><span class="text-muted">Inicio:</span> <strong>{{ formatearFechaHora(citaRegistrada.horaInicio) }}</strong></p>
+        <p *ngIf="citaRegistrada.montoTotal"><span class="text-muted">Monto:</span> <strong>S/ {{ citaRegistrada.montoTotal | number:'1.2-2' }}</strong></p>
+      </div>
+      <p class="text-sm text-muted mt-4 flex items-center justify-center gap-1.5">
+        Te avisaremos aquí cuando el barbero confirme tu cita. Revisa la campana
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4 text-gold-dark">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+        </svg>
+        o «Mis Reservas».
+      </p>
+      <div class="mt-6 flex gap-3 justify-center flex-wrap">
+        <a routerLink="/mis-reservas" class="btn-gold px-6 py-2 inline-block">Ir a Mis Reservas</a>
+        <button type="button" (click)="nuevaReserva()"
+                class="border border-line text-muted px-6 py-2 hover:border-gold-dark hover:text-gold-dark transition-colors">
+          Nueva reserva
+        </button>
+      </div>
     </div>
-
-    <div *ngIf="cargandoBarberos" class="mt-8 text-neutral-400">Cargando barberos disponibles...</div>
-
-    <form *ngIf="!cargandoBarberos" (ngSubmit)="reservar()" class="mt-8 bg-neutral-900 border border-neutral-800 rounded-lg p-6 space-y-5">
-      <div>
-        <label class="block text-neutral-300 text-sm font-medium mb-1">Nombre *</label>
-        <input type="text" [(ngModel)]="nombreCliente" name="nombreCliente" required
-               class="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-neutral-100 focus:outline-none focus:border-amber-500">
-      </div>
-
-      <div>
-        <label class="block text-neutral-300 text-sm font-medium mb-1">Celular *</label>
-        <input type="tel" [(ngModel)]="celularCliente" name="celularCliente" required
-               class="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-neutral-100 focus:outline-none focus:border-amber-500">
-      </div>
-
-      <div>
-        <label class="block text-neutral-300 text-sm font-medium mb-1">Barbero *</label>
-        <select [(ngModel)]="barberoId" name="barberoId" required
-                class="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-neutral-100 focus:outline-none focus:border-amber-500">
-          <option *ngFor="let b of barberos" [ngValue]="b.id">{{ b.nombreCompleto }}</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-neutral-300 text-sm font-medium mb-1">Fecha y hora *</label>
-        <input type="datetime-local" [(ngModel)]="fechaHora" name="fechaHora" required
-               class="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-neutral-100 focus:outline-none focus:border-amber-500">
-      </div>
-
-      <div>
-        <label class="block text-neutral-300 text-sm font-medium mb-1">Monto (opcional)</label>
-        <input type="number" [(ngModel)]="montoTotal" name="montoTotal" min="0" step="0.01"
-               class="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-neutral-100 focus:outline-none focus:border-amber-500">
-      </div>
-
-      <button type="submit" [disabled]="enviando"
-              class="w-full bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-neutral-950 font-semibold py-3 rounded transition-colors">
-        {{ enviando ? 'Reservando...' : 'Reservar cita' }}
-      </button>
-    </form>
   </div>
 </div>

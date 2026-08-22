@@ -19,8 +19,18 @@ export class PromocionService {
     return this.http.get<Promocion[]>(`${this.apiUrl}/activos`).pipe(timeout(10000));
   }
 
+  listarVigentesHoy(): Observable<Promocion[]> {
+    return this.http.get<Promocion[]>(`${this.apiUrl}/vigentes-hoy`).pipe(timeout(10000));
+  }
+
   crearPromocion(promocion: Promocion): Observable<Promocion> {
     return this.http.post<Promocion>(`${this.apiUrl}/crear`, promocion).pipe(timeout(10000));
+  }
+
+  notificarPorCorreo(id: number): Observable<{ enviados: number }> {
+    return this.http
+      .post<{ enviados: number }>(`${this.apiUrl}/${id}/notificar`, {})
+      .pipe(timeout(60000));
   }
 
   actualizarPromocion(id: number, promocion: Promocion): Observable<Promocion> {
